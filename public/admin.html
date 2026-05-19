@@ -1271,12 +1271,18 @@ function renderReportModal(report) {
 
   document.getElementById('modal-patient-name').textContent = report.patient_name || pd.nome || 'Relatório';
 
-  const daA  = scores.daAdult  || 0;
-  const daC  = scores.daChild  || 0;
-  const hiA  = scores.hiAdult  || 0;
-  const hiC  = scores.hiChild  || 0;
+  // suporta ambos os formatos: {daA,daC,hiA,hiC} (novo) e {daAdult,daChild,hiAdult,hiChild} (legado)
+  const daA  = scores.daA  ?? scores.daAdult  ?? 0;
+  const daC  = scores.daC  ?? scores.daChild  ?? 0;
+  const hiA  = scores.hiA  ?? scores.hiAdult  ?? 0;
+  const hiC  = scores.hiC  ?? scores.hiChild  ?? 0;
 
   const diagnosis = result.summary || buildDiagnosisSummary(scores, result);
+  // Monta label do tipo de apresentação
+  const presLabel = result.presType === 'combined' ? 'Tipo Combinado'
+    : result.presType === 'inattentive' ? 'Predominantemente Desatento'
+    : result.presType === 'hyperactive' ? 'Predominantemente Hiperativo/Impulsivo'
+    : null;
 
   let html = `
     <div class="report-hero">
@@ -1308,7 +1314,7 @@ function renderReportModal(report) {
     </div>
 
     <div class="diagnosis-card">
-      <h3>Resultado da Avaliação</h3>
+      <h3>Resultado da Avaliação${presLabel ? ` · <span style="color:var(--accent2);font-size:14px">${escHtml(presLabel)}</span>` : ''}</h3>
       <p>${escHtml(diagnosis)}</p>
     </div>
   `;
@@ -1355,18 +1361,33 @@ function renderSymptomDetails(answers, scores) {
     'Interromper ou intrometer-se'
   ];
 
+  // Suporta formato {selA:{da1:[0,1]}, selC:{da1:[2]}} (formato atual do teste.html)
+  // e formato legado {da1:{adult:[...], child:[...]}}
+  const selA = answers.selA || {};
+  const selC = answers.selC || {};
+  const isNewFormat = answers.selA !== undefined;
+
+  function getAdult(key) {
+    if (isNewFormat) return Array.isArray(selA[key]) ? selA[key] : [];
+    return Array.isArray((answers[key] || {}).adult) ? answers[key].adult : [];
+  }
+  function getChild(key) {
+    if (isNewFormat) return Array.isArray(selC[key]) ? selC[key] : [];
+    return Array.isArray((answers[key] || {}).child) ? answers[key].child : [];
+  }
+
   let html = `<div class="divider"></div><div class="symptoms-section"><h3>Sintomas de Déficit de Atenção</h3>`;
   for (let i = 1; i <= 9; i++) {
     const key   = `da${i}`;
-    const aKey  = answers[key] || {};
-    const adult = Array.isArray(aKey.adult) ? aKey.adult : [];
-    const child = Array.isArray(aKey.child) ? aKey.child : [];
+    const adult = getAdult(key);
+    const child = getChild(key);
     const yes   = adult.length > 0 || child.length > 0;
     html += `<div class="symptom-row">
       <div class="symptom-check ${yes ? 'yes' : 'no'}">${yes ? '✓' : '·'}</div>
       <div>
         <div class="symptom-label">${escHtml(DA_LABELS[i-1])}</div>
-        ${adult.length ? `<div class="chips-mini">${adult.map(x => `<span class="chip-mini">${escHtml(x)}</span>`).join('')}</div>` : ''}
+        ${adult.length ? `<div class="chips-mini">${adult.map(x => `<span class="chip-mini">${escHtml(String(x))}</span>`).join('')}</div>` : ''}
+        ${child.length ? `<div class="chips-mini" style="opacity:0.7">${child.map(x => `<span class="chip-mini">${escHtml(String(x))}</span>`).join('')}</div>` : ''}
       </div>
     </div>`;
   }
@@ -1375,15 +1396,15 @@ function renderSymptomDetails(answers, scores) {
   html += `<div class="symptoms-section" style="margin-top:24px"><h3>Sintomas de Hiperatividade / Impulsividade</h3>`;
   for (let i = 1; i <= 9; i++) {
     const key   = `hi${i}`;
-    const aKey  = answers[key] || {};
-    const adult = Array.isArray(aKey.adult) ? aKey.adult : [];
-    const child = Array.isArray(aKey.child) ? aKey.child : [];
+    const adult = getAdult(key);
+    const child = getChild(key);
     const yes   = adult.length > 0 || child.length > 0;
     html += `<div class="symptom-row">
       <div class="symptom-check ${yes ? 'yes' : 'no'}">${yes ? '✓' : '·'}</div>
       <div>
         <div class="symptom-label">${escHtml(HI_LABELS[i-1])}</div>
-        ${adult.length ? `<div class="chips-mini">${adult.map(x => `<span class="chip-mini">${escHtml(x)}</span>`).join('')}</div>` : ''}
+        ${adult.length ? `<div class="chips-mini">${adult.map(x => `<span class="chip-mini">${escHtml(String(x))}</span>`).join('')}</div>` : ''}
+        ${child.length ? `<div class="chips-mini" style="opacity:0.7">${child.map(x => `<span class="chip-mini">${escHtml(String(x))}</span>`).join('')}</div>` : ''}
       </div>
     </div>`;
   }
@@ -1393,10 +1414,10 @@ function renderSymptomDetails(answers, scores) {
 }
 
 function buildDiagnosisSummary(scores, result) {
-  const daA = scores.daAdult || 0;
-  const hiA = scores.hiAdult || 0;
-  const daC = scores.daChild || 0;
-  const hiC = scores.hiChild || 0;
+  const daA = scores.daA ?? scores.daAdult ?? 0;
+  const hiA = scores.hiA ?? scores.hiAdult ?? 0;
+  const daC = scores.daC ?? scores.daChild ?? 0;
+  const hiC = scores.hiC ?? scores.hiChild ?? 0;
   const THRESHOLD_ADULT = 5;
   const THRESHOLD_CHILD = 3;
   const daMet = daA >= THRESHOLD_ADULT && daC >= THRESHOLD_CHILD;
