@@ -26,15 +26,25 @@ function getLocalIP() {
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
+// Necessário para cookies seguros atrás do proxy do Railway/Heroku
+app.set('trust proxy', 1);
+
 // ── Middleware ──────────────────────────────────────
 app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+const isProduction = process.env.NODE_ENV === 'production' || process.env.RAILWAY_ENVIRONMENT;
 app.use(session({
-  secret: 'diva5-secret-2024',
+  secret: process.env.SESSION_SECRET || 'diva5-secret-2024',
   resave: false,
   saveUninitialized: false,
-  cookie: { maxAge: 8 * 60 * 60 * 1000 } // 8h
+  proxy: true,
+  cookie: {
+    maxAge: 8 * 60 * 60 * 1000, // 8h
+    secure: isProduction ? true : false,
+    sameSite: isProduction ? 'none' : 'lax',
+    httpOnly: true
+  }
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 
