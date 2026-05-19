@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIVA-5 · Painel Administrativo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #111118;
+    --surface: rgba(255,255,255,0.04);
+    --surface2: rgba(255,255,255,0.07);
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --text: #f0f0f8;
+    --text2: rgba(240,240,248,0.55);
+    --text3: rgba(240,240,248,0.35);
+    --accent: #7c6af7;
+    --accent2: #9d8fff;
+    --accent-glow: rgba(124,106,247,0.25);
+    --green: #4ade80;
+    --green-bg: rgba(74,222,128,0.1);
+    --red: #f87171;
+    --red-bg: rgba(248,113,113,0.1);
+    --amber: #fbbf24;
+    --amber-bg: rgba(251,191,36,0.1);
+    --radius: 14px;
+    --radius-sm: 8px;
+    --radius-lg: 20px;
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Canvas Background ── */
+  #bg-canvas {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* ── Layout ── */
+  #app {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+  }
+
+  /* ══════════════════════════════
+     LOGIN PAGE
+  ══════════════════════════════ */
+  #login-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 24px;
+  }
+
+  .login-card {
+    width: 100%;
+    max-width: 400px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-lg);
+    padding: 48px 40px;
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+  }
+
+  .login-logo {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .login-logo .brand {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 300;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #a78bfa, #7c6af7, #c4b5fd);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .login-logo .sub {
+    font-size: 13px;
+    color: var(--text2);
+    margin-top: 4px;
+    letter-spacing: 0.3px;
+  }
+
+  .login-form label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--text2);
+    margin-bottom: 8px;
+  }
+
+  .login-form input {
+    width: 100%;
+    padding: 14px 16px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    margin-bottom: 20px;
+  }
+
+  .login-form input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #7c6af7, #9d8fff);
+    border: none;
+    border-radius: var(--radius-sm);
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+    letter-spacing: 0.2px;
+  }
+
+  .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+
+  .login-error {
+    color: var(--red);
+    font-size: 13px;
+    text-align: center;
+    margin-top: 12px;
+    min-height: 18px;
+  }
+
+  /* ══════════════════════════════
+     DASHBOARD
+  ══════════════════════════════ */
+  #dashboard-page { display: none; }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 32px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(10,10,15,0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .topbar-brand {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 300;
+    letter-spacing: -0.3px;
+    background: linear-gradient(135deg, #a78bfa, #7c6af7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .btn-ghost {
+    padding: 8px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text2);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-ghost:hover {
+    background: var(--surface2);
+    color: var(--text);
+    border-color: var(--border2);
+  }
+
+  .dashboard-content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 32px;
+  }
+
+  /* Stats Row */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    transition: border-color 0.2s;
+  }
+
+  .stat-card:hover { border-color: var(--border2); }
+
+  .stat-label {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 8px;
+  }
+
+  .stat-value {
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .stat-sub {
+    font-size: 12px;
+    color: var(--text3);
+    margin-top: 6px;
+  }
+
+  /* Section */
+  .section {
+    margin-bottom: 40px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .section-title {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+  }
+
+  /* Create Link Form */
+  .create-link-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    margin-bottom: 24px;
+    display: none;
+  }
+
+  .create-link-panel.open { display: block; }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: var(--text2);
+    margin-bottom: 8px;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    width: 100%;
+    padding: 12px 14px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    resize: none;
+  }
+
+  .form-group textarea { height: 72px; }
+
+  .form-group input:focus,
+  .form-group textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 8px;
+  }
+
+  .btn-accent {
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #7c6af7, #9d8fff);
+    border: none;
+    border-radius: var(--radius-sm);
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+  }
+
+  .btn-accent:hover { opacity: 0.9; transform: translateY(-1px); }
+
+  .btn-outline {
+    padding: 10px 18px;
+    background: transparent;
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    color: var(--text2);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-outline:hover { background: var(--surface2); color: var(--text); }
+
+  /* Table */
+  .table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  thead th {
+    padding: 14px 20px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--text3);
+    border-bottom: 1px solid var(--border);
+    background: rgba(255,255,255,0.02);
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: rgba(255,255,255,0.03); }
+
+  tbody td {
+    padding: 16px 20px;
+    font-size: 13px;
+    color: var(--text2);
+    vertical-align: middle;
+  }
+
+  tbody td:first-child { color: var(--text); font-weight: 500; }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+
+  .badge-green { background: var(--green-bg); color: var(--green); }
+  .badge-amber { background: var(--amber-bg); color: var(--amber); }
+  .badge-red   { background: var(--red-bg); color: var(--red); }
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .link-url {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 280px;
+  }
+
+  .link-text {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 11px;
+    color: var(--accent2);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .copy-btn {
+    flex-shrink: 0;
+    padding: 4px 8px;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 5px;
+    color: var(--text3);
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .copy-btn:hover { color: var(--text); border-color: var(--accent); }
+  .copy-btn.copied { color: var(--green); border-color: var(--green); }
+
+  .row-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .btn-icon {
+    padding: 6px 10px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text3);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .btn-icon:hover { background: var(--surface2); color: var(--text); border-color: var(--border2); }
+  .btn-icon.danger:hover { background: var(--red-bg); color: var(--red); border-color: var(--red); }
+  .btn-icon.primary-btn:hover { background: rgba(124,106,247,0.15); color: var(--accent2); border-color: var(--accent); }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text3);
+  }
+
+  .empty-state .icon { font-size: 32px; margin-bottom: 12px; }
+  .empty-state p { font-size: 14px; }
+
+  /* ══════════════════════════════
+     REPORT MODAL
+  ══════════════════════════════ */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 500;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 24px;
+    overflow-y: auto;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+  }
+
+  .modal-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .modal {
+    width: 100%;
+    max-width: 760px;
+    background: #13131c;
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transform: translateY(20px);
+    transition: transform 0.25s;
+  }
+
+  .modal-overlay.open .modal { transform: translateY(0); }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 28px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .modal-title {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+  }
+
+  .modal-close {
+    width: 32px;
+    height: 32px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text2);
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+
+  .modal-close:hover { background: var(--red-bg); color: var(--red); border-color: var(--red); }
+
+  .modal-body {
+    padding: 28px;
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+  }
+
+  .report-hero {
+    background: linear-gradient(135deg, rgba(124,106,247,0.12), rgba(157,143,255,0.05));
+    border: 1px solid rgba(124,106,247,0.2);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .report-patient {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.4px;
+    margin-bottom: 4px;
+  }
+
+  .report-meta {
+    font-size: 13px;
+    color: var(--text2);
+  }
+
+  .score-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .score-tile {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    text-align: center;
+  }
+
+  .score-tile .num {
+    font-size: 40px;
+    font-weight: 700;
+    letter-spacing: -1.5px;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .score-tile .lbl {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: var(--text3);
+  }
+
+  .score-tile.accent .num { color: var(--accent2); }
+  .score-tile.green .num { color: var(--green); }
+
+  .diagnosis-card {
+    background: linear-gradient(135deg, rgba(124,106,247,0.1), rgba(74,222,128,0.05));
+    border: 1px solid rgba(124,106,247,0.25);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin-bottom: 24px;
+  }
+
+  .diagnosis-card h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--accent2);
+    margin-bottom: 8px;
+  }
+
+  .diagnosis-card p { font-size: 14px; color: var(--text2); line-height: 1.7; }
+
+  .symptoms-section h3 {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+    margin-bottom: 14px;
+    color: var(--text2);
+  }
+
+  .symptom-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .symptom-row:last-child { border-bottom: none; }
+
+  .symptom-check {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+  }
+
+  .symptom-check.yes { background: var(--green-bg); color: var(--green); border: 1px solid var(--green); }
+  .symptom-check.no  { background: var(--surface2); color: var(--text3); border: 1px solid var(--border); }
+
+  .symptom-label { font-size: 13px; color: var(--text); font-weight: 500; line-height: 1.4; }
+  .symptom-sub   { font-size: 12px; color: var(--text3); margin-top: 2px; }
+
+  .chips-mini {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 6px;
+  }
+
+  .chip-mini {
+    padding: 2px 8px;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 20px;
+    font-size: 11px;
+    color: var(--text2);
+  }
+
+  /* Loader spinner */
+  .spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255,255,255,0.15);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin: 40px auto;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    padding: 12px 20px;
+    background: rgba(30,30,42,0.95);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 500;
+    z-index: 1000;
+    backdrop-filter: blur(12px);
+    transform: translateY(12px);
+    opacity: 0;
+    transition: all 0.25s;
+    pointer-events: none;
+  }
+
+  .toast.show {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .toast.success { border-color: rgba(74,222,128,0.35); }
+  .toast.error   { border-color: rgba(248,113,113,0.35); }
+
+  /* Date formatting */
+  .date-cell { font-size: 12px; color: var(--text3); }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 2px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 4px;
+    margin-bottom: 24px;
+    width: fit-content;
+  }
+
+  .tab {
+    padding: 8px 18px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--text2);
+    transition: all 0.15s;
+    border: none;
+    background: none;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .tab.active {
+    background: linear-gradient(135deg, #7c6af7, #9d8fff);
+    color: #fff;
+  }
+
+  .tab:not(.active):hover { color: var(--text); background: var(--surface2); }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 28px 0;
+  }
+
+  /* Inline scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+</style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+
+<div id="app">
+
+  <!-- ══ LOGIN PAGE ══ -->
+  <div id="login-page">
+    <div class="login-card">
+      <div class="login-logo">
+        <div class="brand">DIVA-5</div>
+        <div class="sub">Painel Administrativo</div>
+      </div>
+      <form class="login-form" id="login-form" onsubmit="doLogin(event)">
+        <label for="password-input">Senha de acesso</label>
+        <input type="password" id="password-input" placeholder="••••••••" autocomplete="current-password" required>
+        <button type="submit" class="btn-primary" id="login-btn">Entrar</button>
+        <div class="login-error" id="login-error"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ══ DASHBOARD PAGE ══ -->
+  <div id="dashboard-page">
+
+    <div class="topbar">
+      <div class="topbar-brand">DIVA-5 · Admin</div>
+      <div class="topbar-right">
+        <span id="admin-label" style="font-size:13px; color: var(--text3);">Administrador</span>
+        <button class="btn-ghost" onclick="doLogout()">Sair</button>
+      </div>
+    </div>
+
+    <div class="dashboard-content">
+
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">Links Criados</div>
+          <div class="stat-value" id="stat-links">—</div>
+          <div class="stat-sub">Total de links gerados</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Testes Concluídos</div>
+          <div class="stat-value" id="stat-reports">—</div>
+          <div class="stat-sub">Relatórios disponíveis</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Pendentes</div>
+          <div class="stat-value" id="stat-pending">—</div>
+          <div class="stat-sub">Links não utilizados</div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab active" id="tab-links" onclick="switchTab('links')">Links de Acesso</button>
+        <button class="tab" id="tab-reports" onclick="switchTab('reports')">Relatórios</button>
+      </div>
+
+      <!-- ── TAB: LINKS ── -->
+      <div id="panel-links">
+        <div class="section">
+          <div class="section-header">
+            <div class="section-title">Links de Acesso</div>
+            <button class="btn-accent" onclick="toggleCreateForm()" id="create-toggle-btn">+ Novo Link</button>
+          </div>
+
+          <!-- Create form -->
+          <div class="create-link-panel" id="create-panel">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Nome do paciente</label>
+                <input type="text" id="new-name" placeholder="Ex: Maria Silva">
+              </div>
+              <div class="form-group">
+                <label>E-mail (opcional)</label>
+                <input type="email" id="new-email" placeholder="maria@email.com">
+              </div>
+            </div>
+            <div class="form-group" style="margin-bottom:0">
+              <label>Observações (opcional)</label>
+              <textarea id="new-notes" placeholder="Notas internas sobre este paciente..."></textarea>
+            </div>
+            <div class="form-actions">
+              <button class="btn-outline" onclick="toggleCreateForm()">Cancelar</button>
+              <button class="btn-accent" onclick="createLink()">Gerar Link</button>
+            </div>
+          </div>
+
+          <!-- Links Table -->
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Paciente</th>
+                  <th>Link de Acesso</th>
+                  <th>Status</th>
+                  <th>Criado em</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="links-tbody">
+                <tr><td colspan="5"><div class="spinner"></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB: REPORTS ── -->
+      <div id="panel-reports" style="display:none">
+        <div class="section">
+          <div class="section-header">
+            <div class="section-title">Relatórios Recebidos</div>
+            <button class="btn-ghost" onclick="loadReports()">↻ Atualizar</button>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Paciente</th>
+                  <th>E-mail</th>
+                  <th>Data</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="reports-tbody">
+                <tr><td colspan="4"><div class="spinner"></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /dashboard-content -->
+  </div><!-- /dashboard-page -->
+</div><!-- /app -->
+
+<!-- ══ REPORT MODAL ══ -->
+<div class="modal-overlay" id="report-modal" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-patient-name">Relatório</div>
+      <button class="modal-close" onclick="closeModalBtn()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body">
+      <div class="spinner"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════
+//  CANVAS BACKGROUND
+// ══════════════════════════════════════════════════════
+(function() {
+  const canvas = document.getElementById('bg-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, orbs;
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function initOrbs() {
+    orbs = [
+      { x: W*0.15, y: H*0.2,  r: 320, c: [120,100,240], dx: 0.18, dy: 0.12, phase: 0    },
+      { x: W*0.8,  y: H*0.15, r: 260, c: [80, 60, 200], dx:-0.14, dy: 0.16, phase: 1.2  },
+      { x: W*0.6,  y: H*0.75, r: 280, c: [150,80, 220], dx: 0.12, dy:-0.18, phase: 2.4  },
+      { x: W*0.25, y: H*0.8,  r: 200, c: [60, 40, 180], dx:-0.16, dy:-0.12, phase: 0.7  },
+    ];
+  }
+
+  let t = 0;
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    t += 0.004;
+    orbs.forEach(o => {
+      const px = o.x + Math.sin(t + o.phase) * 60;
+      const py = o.y + Math.cos(t * 0.7 + o.phase) * 40;
+      const g = ctx.createRadialGradient(px, py, 0, px, py, o.r);
+      g.addColorStop(0,   `rgba(${o.c[0]},${o.c[1]},${o.c[2]},0.18)`);
+      g.addColorStop(0.5, `rgba(${o.c[0]},${o.c[1]},${o.c[2]},0.07)`);
+      g.addColorStop(1,   `rgba(${o.c[0]},${o.c[1]},${o.c[2]},0)`);
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(px, py, o.r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  initOrbs();
+  draw();
+  window.addEventListener('resize', () => { resize(); initOrbs(); });
+})();
+
+// ══════════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════════
+let currentTab = 'links';
+let linksData  = [];
+let reportsData = [];
+let serverBaseUrl = location.origin; // fallback, atualizado após login
+
+// ══════════════════════════════════════════════════════
+//  INIT — check session
+// ══════════════════════════════════════════════════════
+(async function init() {
+  try {
+    const res = await fetch('/api/admin/check');
+    const data = await res.json();
+    if (data.admin) {
+      showDashboard();
+    }
+  } catch(e) { /* show login */ }
+})();
+
+// ══════════════════════════════════════════════════════
+//  AUTH
+// ══════════════════════════════════════════════════════
+async function doLogin(e) {
+  e.preventDefault();
+  const btn = document.getElementById('login-btn');
+  const err = document.getElementById('login-error');
+  const pw  = document.getElementById('password-input').value;
+  btn.disabled = true;
+  btn.textContent = 'Aguarde...';
+  err.textContent = '';
+  try {
+    const res = await fetch('/api/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pw })
+    });
+    if (res.ok) {
+      showDashboard();
+    } else {
+      const d = await res.json();
+      err.textContent = d.error || 'Senha incorreta';
+    }
+  } catch(ex) {
+    err.textContent = 'Erro de conexão. Verifique se o servidor está rodando.';
+  }
+  btn.disabled = false;
+  btn.textContent = 'Entrar';
+}
+
+async function doLogout() {
+  await fetch('/api/admin/logout', { method: 'POST' });
+  document.getElementById('dashboard-page').style.display = 'none';
+  document.getElementById('login-page').style.display = 'flex';
+  document.getElementById('password-input').value = '';
+}
+
+// ══════════════════════════════════════════════════════
+//  SHOW DASHBOARD
+// ══════════════════════════════════════════════════════
+async function showDashboard() {
+  document.getElementById('login-page').style.display = 'none';
+  document.getElementById('dashboard-page').style.display = 'block';
+  // Busca IP real do servidor para gerar links acessíveis pelo paciente
+  try {
+    const r = await fetch('/api/server-info');
+    if (r.ok) {
+      const info = await r.json();
+      serverBaseUrl = info.baseUrl;
+      // Mostra o IP no topbar
+      const lbl = document.getElementById('admin-label');
+      if (lbl) lbl.textContent = `Rede: ${info.ip}:${info.port}`;
+    }
+  } catch(e) { /* usa location.origin como fallback */ }
+  loadLinks();
+  loadReports();
+}
+
+// ══════════════════════════════════════════════════════
+//  TABS
+// ══════════════════════════════════════════════════════
+function switchTab(tab) {
+  currentTab = tab;
+  document.getElementById('panel-links').style.display   = tab === 'links'   ? 'block' : 'none';
+  document.getElementById('panel-reports').style.display = tab === 'reports' ? 'block' : 'none';
+  document.getElementById('tab-links').classList.toggle('active',   tab === 'links');
+  document.getElementById('tab-reports').classList.toggle('active', tab === 'reports');
+}
+
+// ══════════════════════════════════════════════════════
+//  LINKS
+// ══════════════════════════════════════════════════════
+async function loadLinks() {
+  try {
+    const res  = await fetch('/api/admin/links');
+    linksData  = await res.json();
+    renderLinks();
+    updateStats();
+  } catch(e) {
+    document.getElementById('links-tbody').innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--red); padding:30px">Erro ao carregar links</td></tr>';
+  }
+}
+
+function renderLinks() {
+  const tbody = document.getElementById('links-tbody');
+  if (!linksData.length) {
+    tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><div class="icon">🔗</div><p>Nenhum link criado ainda.<br>Clique em "Novo Link" para começar.</p></div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = linksData.map(link => {
+    const url      = `${serverBaseUrl}/teste/${link.token}`;
+    const shortUrl = `${serverBaseUrl}/teste/${link.token.slice(0,8)}...`;
+    const badge    = link.used
+      ? `<span class="badge badge-green"><span class="dot"></span>Concluído</span>`
+      : `<span class="badge badge-amber"><span class="dot"></span>Pendente</span>`;
+    const name = link.patient_name || '<span style="color:var(--text3)">—</span>';
+
+    return `<tr>
+      <td>${escHtml(link.patient_name || '—')}</td>
+      <td>
+        <div class="link-url">
+          <span class="link-text" title="${escHtml(url)}">${escHtml(shortUrl)}</span>
+          <button class="copy-btn" onclick="copyLink(this,'${escHtml(url)}')">Copiar</button>
+        </div>
+      </td>
+      <td>${badge}</td>
+      <td class="date-cell">${formatDate(link.created_at)}</td>
+      <td>
+        <div class="row-actions">
+          ${link.used ? `<button class="btn-icon primary-btn" onclick="viewReportByToken('${link.token}')">Ver Relatório</button>` : ''}
+          <button class="btn-icon danger" onclick="deleteLink('${link.token}')">Excluir</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function updateStats() {
+  const total   = linksData.length;
+  const used    = linksData.filter(l => l.used).length;
+  const pending = total - used;
+  document.getElementById('stat-links').textContent   = total;
+  document.getElementById('stat-pending').textContent = pending;
+}
+
+function toggleCreateForm() {
+  const panel = document.getElementById('create-panel');
+  panel.classList.toggle('open');
+  if (panel.classList.contains('open')) {
+    document.getElementById('new-name').focus();
+  }
+}
+
+async function createLink() {
+  const name  = document.getElementById('new-name').value.trim();
+  const email = document.getElementById('new-email').value.trim();
+  const notes = document.getElementById('new-notes').value.trim();
+
+  try {
+    const res  = await fetch('/api/admin/links', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ patientName: name, patientEmail: email, notes })
+    });
+    const data = await res.json();
+
+    if (data.ok) {
+      // Clear form
+      document.getElementById('new-name').value  = '';
+      document.getElementById('new-email').value = '';
+      document.getElementById('new-notes').value = '';
+      document.getElementById('create-panel').classList.remove('open');
+
+      showToast('Link criado com sucesso!', 'success');
+      await loadLinks();
+
+      // Auto-copy the new URL
+      const url = `${serverBaseUrl}/teste/${data.token}`;
+      navigator.clipboard.writeText(url).catch(() => {});
+      showToast(`Link copiado: /teste/${data.token.slice(0,8)}...`, 'success');
+    }
+  } catch(e) {
+    showToast('Erro ao criar link', 'error');
+  }
+}
+
+async function deleteLink(token) {
+  if (!confirm('Excluir este link? O relatório associado também será removido.')) return;
+  try {
+    await fetch(`/api/admin/links/${token}`, { method: 'DELETE' });
+    showToast('Link excluído', 'success');
+    await Promise.all([loadLinks(), loadReports()]);
+  } catch(e) {
+    showToast('Erro ao excluir', 'error');
+  }
+}
+
+// ══════════════════════════════════════════════════════
+//  REPORTS
+// ══════════════════════════════════════════════════════
+async function loadReports() {
+  try {
+    const res   = await fetch('/api/admin/reports');
+    reportsData = await res.json();
+    renderReports();
+    document.getElementById('stat-reports').textContent = reportsData.length;
+  } catch(e) {
+    document.getElementById('reports-tbody').innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--red);padding:30px">Erro ao carregar relatórios</td></tr>';
+  }
+}
+
+function renderReports() {
+  const tbody = document.getElementById('reports-tbody');
+  if (!reportsData.length) {
+    tbody.innerHTML = `<tr><td colspan="4"><div class="empty-state"><div class="icon">📋</div><p>Nenhum relatório recebido ainda.</p></div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = reportsData.map(r => `<tr>
+    <td>${escHtml(r.patient_name || '—')}</td>
+    <td style="font-size:12px; color:var(--text3)">${escHtml(r.patient_email || '—')}</td>
+    <td class="date-cell">${formatDate(r.created_at)}</td>
+    <td>
+      <div class="row-actions">
+        <button class="btn-icon primary-btn" onclick="viewReport('${r.token}')">Ver Relatório</button>
+        <button class="btn-icon danger" onclick="deleteReport('${r.token}')">Excluir</button>
+      </div>
+    </td>
+  </tr>`).join('');
+}
+
+async function deleteReport(token) {
+  if (!confirm('Excluir este relatório?')) return;
+  try {
+    await fetch(`/api/admin/reports/${token}`, { method: 'DELETE' });
+    showToast('Relatório excluído', 'success');
+    await loadReports();
+  } catch(e) {
+    showToast('Erro ao excluir', 'error');
+  }
+}
+
+// ══════════════════════════════════════════════════════
+//  REPORT MODAL
+// ══════════════════════════════════════════════════════
+async function viewReport(token) {
+  openModal();
+  document.getElementById('modal-patient-name').textContent = 'Carregando...';
+  document.getElementById('modal-body').innerHTML = '<div class="spinner"></div>';
+  try {
+    const res    = await fetch(`/api/admin/reports/${token}`);
+    const report = await res.json();
+    renderReportModal(report);
+  } catch(e) {
+    document.getElementById('modal-body').innerHTML = '<p style="color:var(--red);text-align:center;padding:40px">Erro ao carregar relatório</p>';
+  }
+}
+
+async function viewReportByToken(token) {
+  switchTab('reports');
+  setTimeout(() => viewReport(token), 100);
+}
+
+function openModal() {
+  document.getElementById('report-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('report-modal')) closeModalBtn();
+}
+
+function closeModalBtn() {
+  document.getElementById('report-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function renderReportModal(report) {
+  const pd     = report.patientData || {};
+  const scores = report.scores || {};
+  const result = report.result || {};
+  const answers= report.answers || {};
+
+  document.getElementById('modal-patient-name').textContent = report.patient_name || pd.nome || 'Relatório';
+
+  const daA  = scores.daAdult  || 0;
+  const daC  = scores.daChild  || 0;
+  const hiA  = scores.hiAdult  || 0;
+  const hiC  = scores.hiChild  || 0;
+
+  const diagnosis = result.summary || buildDiagnosisSummary(scores, result);
+
+  let html = `
+    <div class="report-hero">
+      <div class="report-patient">${escHtml(report.patient_name || pd.nome || 'Paciente')}</div>
+      <div class="report-meta">
+        ${report.patient_email ? `<span>${escHtml(report.patient_email)}</span> · ` : ''}
+        <span>${formatDate(report.created_at)}</span>
+        ${pd.idade ? ` · <span>${escHtml(pd.idade)} anos</span>` : ''}
+      </div>
+    </div>
+
+    <div class="score-grid">
+      <div class="score-tile accent">
+        <div class="num">${daA}<span style="font-size:18px;opacity:0.5">/9</span></div>
+        <div class="lbl">Déficit de Atenção · Adulto</div>
+      </div>
+      <div class="score-tile accent">
+        <div class="num">${hiA}<span style="font-size:18px;opacity:0.5">/9</span></div>
+        <div class="lbl">Hiperatividade · Adulto</div>
+      </div>
+      <div class="score-tile green">
+        <div class="num">${daC}<span style="font-size:18px;opacity:0.5">/9</span></div>
+        <div class="lbl">Déficit de Atenção · Infância</div>
+      </div>
+      <div class="score-tile green">
+        <div class="num">${hiC}<span style="font-size:18px;opacity:0.5">/9</span></div>
+        <div class="lbl">Hiperatividade · Infância</div>
+      </div>
+    </div>
+
+    <div class="diagnosis-card">
+      <h3>Resultado da Avaliação</h3>
+      <p>${escHtml(diagnosis)}</p>
+    </div>
+  `;
+
+  // Symptom details
+  if (report.answers && typeof report.answers === 'object') {
+    html += renderSymptomDetails(report.answers, scores);
+  }
+
+  // Patient context
+  if (pd.contextoAdulto || pd.contextoInfancia) {
+    html += `<div class="divider"></div>
+    <div class="symptoms-section">
+      <h3>Contexto Relatado</h3>`;
+    if (pd.contextoAdulto)   html += `<p style="font-size:13px; color:var(--text2); margin-bottom:8px"><strong style="color:var(--text3)">Adulto:</strong> ${escHtml(pd.contextoAdulto)}</p>`;
+    if (pd.contextoInfancia) html += `<p style="font-size:13px; color:var(--text2)"><strong style="color:var(--text3)">Infância:</strong> ${escHtml(pd.contextoInfancia)}</p>`;
+    html += `</div>`;
+  }
+
+  document.getElementById('modal-body').innerHTML = html;
+}
+
+function renderSymptomDetails(answers, scores) {
+  const DA_LABELS = [
+    'Atenção a detalhes / erros por descuido',
+    'Manter atenção em tarefas longas',
+    'Parece não escutar quando falado diretamente',
+    'Seguir instruções e concluir tarefas',
+    'Organizar tarefas e atividades',
+    'Evitar tarefas que exigem esforço mental',
+    'Perder objetos necessários',
+    'Distrair-se com estímulos externos',
+    'Esquecer atividades do dia a dia'
+  ];
+  const HI_LABELS = [
+    'Agitar mãos, pés ou mexer no assento',
+    'Sair do lugar quando deveria ficar sentado',
+    'Correr ou subir em situações inapropriadas',
+    'Dificuldade em atividades silenciosas ou de lazer',
+    'Agitação constante, como "movido a motor"',
+    'Falar excessivamente',
+    'Responder antes da pergunta ser concluída',
+    'Dificuldade em esperar a vez',
+    'Interromper ou intrometer-se'
+  ];
+
+  let html = `<div class="divider"></div><div class="symptoms-section"><h3>Sintomas de Déficit de Atenção</h3>`;
+  for (let i = 1; i <= 9; i++) {
+    const key   = `da${i}`;
+    const aKey  = answers[key] || {};
+    const adult = Array.isArray(aKey.adult) ? aKey.adult : [];
+    const child = Array.isArray(aKey.child) ? aKey.child : [];
+    const yes   = adult.length > 0 || child.length > 0;
+    html += `<div class="symptom-row">
+      <div class="symptom-check ${yes ? 'yes' : 'no'}">${yes ? '✓' : '·'}</div>
+      <div>
+        <div class="symptom-label">${escHtml(DA_LABELS[i-1])}</div>
+        ${adult.length ? `<div class="chips-mini">${adult.map(x => `<span class="chip-mini">${escHtml(x)}</span>`).join('')}</div>` : ''}
+      </div>
+    </div>`;
+  }
+  html += `</div>`;
+
+  html += `<div class="symptoms-section" style="margin-top:24px"><h3>Sintomas de Hiperatividade / Impulsividade</h3>`;
+  for (let i = 1; i <= 9; i++) {
+    const key   = `hi${i}`;
+    const aKey  = answers[key] || {};
+    const adult = Array.isArray(aKey.adult) ? aKey.adult : [];
+    const child = Array.isArray(aKey.child) ? aKey.child : [];
+    const yes   = adult.length > 0 || child.length > 0;
+    html += `<div class="symptom-row">
+      <div class="symptom-check ${yes ? 'yes' : 'no'}">${yes ? '✓' : '·'}</div>
+      <div>
+        <div class="symptom-label">${escHtml(HI_LABELS[i-1])}</div>
+        ${adult.length ? `<div class="chips-mini">${adult.map(x => `<span class="chip-mini">${escHtml(x)}</span>`).join('')}</div>` : ''}
+      </div>
+    </div>`;
+  }
+  html += `</div>`;
+
+  return html;
+}
+
+function buildDiagnosisSummary(scores, result) {
+  const daA = scores.daAdult || 0;
+  const hiA = scores.hiAdult || 0;
+  const daC = scores.daChild || 0;
+  const hiC = scores.hiChild || 0;
+  const THRESHOLD_ADULT = 5;
+  const THRESHOLD_CHILD = 3;
+  const daMet = daA >= THRESHOLD_ADULT && daC >= THRESHOLD_CHILD;
+  const hiMet = hiA >= THRESHOLD_ADULT && hiC >= THRESHOLD_CHILD;
+
+  if (daMet && hiMet) return `Critérios atingidos para TDAH tipo combinado (${daA} sintomas de atenção adulto, ${hiA} sintomas de hiperatividade adulto). Avaliação clínica profissional recomendada.`;
+  if (daMet) return `Critérios atingidos para TDAH com predominância de Déficit de Atenção (${daA}/9 sintomas adulto, ${daC}/9 infância). Avaliação clínica profissional recomendada.`;
+  if (hiMet) return `Critérios atingidos para TDAH com predominância de Hiperatividade/Impulsividade (${hiA}/9 sintomas adulto, ${hiC}/9 infância). Avaliação clínica profissional recomendada.`;
+  return `Critérios diagnósticos não atingidos de forma completa nesta autoavaliação (DA: ${daA}/9 adulto, ${daC}/9 infância · HI: ${hiA}/9 adulto, ${hiC}/9 infância). Avaliação clínica profissional sempre recomendada.`;
+}
+
+// ══════════════════════════════════════════════════════
+//  UTILS
+// ══════════════════════════════════════════════════════
+function copyLink(btn, url) {
+  navigator.clipboard.writeText(url).then(() => {
+    btn.textContent = 'Copiado!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copiar'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function escHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function formatDate(str) {
+  if (!str) return '—';
+  try {
+    const d = new Date(str.replace(' ', 'T'));
+    return d.toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit', year:'numeric' })
+      + ' ' + d.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
+  } catch(e) { return str; }
+}
+
+let toastTimer;
+function showToast(msg, type = '') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = `toast ${type} show`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.className = 'toast'; }, 3000);
+}
+</script>
+</body>
+</html>
