@@ -1,0 +1,21 @@
+{
+  "name": "diva5-system",
+  "version": "1.0.0",
+  "description": "DIVA-5 TDAH - Sistema de autoavaliação",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^12.9.0",
+    "cookie-parser": "^1.4.7",
+    "express": "^4.22.1",
+    "express-session": "^1.19.0",
+    "uuid": "^9.0.1"
+  }
+}
