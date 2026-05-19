@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIVA-5 · Avaliação</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fraunces:ital,wght@0,300;0,700;1,300;1,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --indigo:#5b5bff;--violet:#9b5bff;--rose:#ff4d8d;--amber:#ffb340;--emerald:#22c88a;
+  --g50:#f9fafb;--g100:#f3f4f6;--g200:#e5e7eb;--g300:#d1d5db;--g500:#6b7280;--g700:#374151;--g900:#111827;
+  --ease-spring:cubic-bezier(.34,1.56,.64,1);--ease-out:cubic-bezier(.22,1,.36,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:#0c0c1e;color:#fff;min-height:100vh;overflow-x:hidden}
+#bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+#app{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column}
+
+/* NAV */
+#pnav{position:fixed;top:0;left:0;right:0;z-index:100;height:60px;display:none;align-items:center;gap:16px;padding:0 24px;background:rgba(10,10,30,.75);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.06)}
+#pnav.on{display:flex}
+.nav-logo{font-family:'Fraunces',serif;font-size:14px;font-style:italic;color:rgba(255,255,255,.4);white-space:nowrap}
+.nav-logo span{color:var(--indigo)}
+.nav-bar-wrap{flex:1;height:3px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden}
+.nav-bar-fill{height:100%;background:linear-gradient(90deg,var(--indigo),var(--violet));border-radius:99px;transition:width .5s var(--ease-out);box-shadow:0 0 12px rgba(91,91,255,.5)}
+.nav-pct{font-size:12px;font-weight:700;color:var(--indigo);min-width:36px;text-align:right}
+
+/* PAGES */
+.page{display:none;min-height:100vh;animation:pIn .45s var(--ease-out) both}
+.page.active{display:flex;flex-direction:column}
+@keyframes pIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+
+/* HERO */
+.hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 24px;text-align:center}
+.hero-pill{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:rgba(91,91,255,.15);border:1px solid rgba(91,91,255,.3);border-radius:99px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(150,150,255,.9);margin-bottom:32px}
+.hero-pill::before{content:'';width:6px;height:6px;background:var(--indigo);border-radius:50%;box-shadow:0 0 8px var(--indigo);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+.hero-title{font-family:'Fraunces',serif;font-size:clamp(40px,8vw,76px);font-weight:700;line-height:1;letter-spacing:-2px;color:#fff;margin-bottom:8px}
+.hero-title em{font-style:italic;font-weight:300;background:linear-gradient(135deg,var(--indigo),var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:clamp(15px,2.5vw,18px);font-weight:300;color:rgba(255,255,255,.4);margin-bottom:48px;max-width:460px;line-height:1.65}
+.hero-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;max-width:520px;width:100%;margin-bottom:40px;text-align:left}
+@media(max-width:480px){.hero-cards{grid-template-columns:1fr}}
+.hcard{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:18px;transition:all .3s}
+.hcard:hover{background:rgba(91,91,255,.08);border-color:rgba(91,91,255,.2);transform:translateY(-2px)}
+.hcard-icon{font-size:20px;margin-bottom:8px}
+.hcard-title{font-size:13px;font-weight:700;color:rgba(255,255,255,.9);margin-bottom:3px}
+.hcard-text{font-size:12px;color:rgba(255,255,255,.3);line-height:1.5}
+.hero-disc{max-width:440px;font-size:12px;color:rgba(255,255,255,.2);line-height:1.7;margin-bottom:36px;padding:14px 18px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;border-radius:99px;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;border:none;cursor:pointer;transition:all .25s var(--ease-spring);letter-spacing:.2px}
+.btn-hero{background:linear-gradient(135deg,var(--indigo),var(--violet));color:#fff;font-size:16px;padding:17px 38px;box-shadow:0 8px 28px rgba(91,91,255,.35)}
+.btn-hero:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 12px 36px rgba(91,91,255,.5)}
+.btn-primary{background:linear-gradient(135deg,var(--indigo),var(--violet));color:#fff;box-shadow:0 4px 16px rgba(91,91,255,.3)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(91,91,255,.45)}
+.btn-ghost{background:rgba(255,255,255,.06);color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.1)}
+.btn-ghost:hover{background:rgba(255,255,255,.1);color:rgba(255,255,255,.9)}
+.btn-icon{font-size:16px;transition:transform .25s var(--ease-spring)}
+.btn:hover .btn-icon{transform:translateX(3px)}
+
+/* FORM PAGE */
+.form-page{flex:1;display:flex;align-items:center;justify-content:center;padding:80px 24px 60px}
+.form-shell{width:100%;max-width:500px}
+.form-eyebrow{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--indigo);margin-bottom:14px;opacity:.8}
+.form-heading{font-family:'Fraunces',serif;font-size:34px;font-weight:700;color:#fff;margin-bottom:6px;line-height:1.1;letter-spacing:-1px}
+.form-heading em{font-style:italic;font-weight:300;color:rgba(255,255,255,.4)}
+.form-desc{font-size:14px;color:rgba(255,255,255,.3);margin-bottom:32px;line-height:1.6}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:28px}
+@media(max-width:480px){.form-grid{grid-template-columns:1fr}}
+.fgroup{display:flex;flex-direction:column;gap:5px}
+.fgroup.full{grid-column:1/-1}
+.fgroup label{font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:rgba(255,255,255,.3)}
+.fgroup input,.fgroup select{padding:12px 15px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;font-family:'Inter',sans-serif;font-size:14px;color:#fff;outline:none;appearance:none;transition:all .2s}
+.fgroup input::placeholder{color:rgba(255,255,255,.18)}
+.fgroup input:focus,.fgroup select:focus{border-color:rgba(91,91,255,.5);background:rgba(91,91,255,.08);box-shadow:0 0 0 3px rgba(91,91,255,.12)}
+.fgroup select option{background:#1c1c3a;color:#fff}
+.form-nav{display:flex;align-items:center;justify-content:space-between}
+
+/* INSTR PAGE */
+.instr-page{flex:1;display:flex;align-items:center;justify-content:center;padding:80px 24px 60px}
+.instr-shell{width:100%;max-width:540px;text-align:center}
+.instr-icon{font-size:50px;margin-bottom:22px;display:block}
+.instr-heading{font-family:'Fraunces',serif;font-size:36px;font-weight:700;color:#fff;letter-spacing:-1px;line-height:1.1;margin-bottom:14px}
+.instr-heading em{font-style:italic;font-weight:300}
+.instr-body{font-size:15px;color:rgba(255,255,255,.45);line-height:1.7;margin-bottom:28px}
+.instr-tags{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:32px}
+.tag-pill{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:99px;font-size:12px;font-weight:600}
+.tag-blue{background:rgba(91,91,255,.15);border:1px solid rgba(91,91,255,.25);color:rgba(150,150,255,.9)}
+.tag-pink{background:rgba(255,77,141,.12);border:1px solid rgba(255,77,141,.22);color:rgba(255,140,185,.9)}
+.tag-em{background:rgba(34,200,138,.12);border:1px solid rgba(34,200,138,.22);color:rgba(34,200,138,.9)}
+.instr-nav{display:flex;gap:12px;justify-content:center}
+
+/* QUESTION PAGE */
+.q-page{flex:1;display:flex;flex-direction:column;padding-top:60px}
+.q-shell{flex:1;max-width:660px;width:100%;margin:0 auto;padding:36px 22px 60px}
+.q-eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.q-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:rgba(91,91,255,.12);border:1px solid rgba(91,91,255,.2);border-radius:99px;font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:rgba(150,150,255,.9)}
+.q-badge.hi{background:rgba(155,91,255,.12);border-color:rgba(155,91,255,.2);color:rgba(180,140,255,.9)}
+.q-num{font-size:11px;color:rgba(255,255,255,.2);font-weight:500}
+.q-title{font-family:'Fraunces',serif;font-size:clamp(20px,4vw,28px);font-weight:700;color:#fff;line-height:1.25;letter-spacing:-.5px;margin-bottom:24px}
+.period-block{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:22px;margin-bottom:14px;transition:all .3s}
+.period-block.has-sel{border-color:rgba(91,91,255,.3);background:rgba(91,91,255,.04)}
+.period-block.has-sel.cb{border-color:rgba(255,77,141,.25);background:rgba(255,77,141,.04)}
+.period-hdr{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.period-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.18);flex-shrink:0;transition:all .3s}
+.period-block.has-sel .period-dot{background:var(--indigo);box-shadow:0 0 8px var(--indigo)}
+.period-block.has-sel.cb .period-dot{background:var(--rose);box-shadow:0 0 8px var(--rose)}
+.period-lbl{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.28);transition:color .3s}
+.period-block.has-sel .period-lbl{color:rgba(150,150,255,.8)}
+.period-block.has-sel.cb .period-lbl{color:rgba(255,140,185,.8)}
+.period-cnt{margin-left:auto;font-size:11px;font-weight:600;color:rgba(255,255,255,.15);transition:color .3s}
+.period-block.has-sel .period-cnt{color:var(--indigo)}
+.period-block.has-sel.cb .period-cnt{color:var(--rose)}
+.period-q{font-size:13px;color:rgba(255,255,255,.4);margin-bottom:12px;line-height:1.55;font-style:italic}
+.chips-wrap{display:flex;flex-wrap:wrap;gap:7px}
+.chip{padding:7px 13px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:99px;font-size:13px;color:rgba(255,255,255,.5);cursor:pointer;transition:all .2s var(--ease-spring);user-select:none;line-height:1.3}
+.chip:hover{background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);border-color:rgba(255,255,255,.15);transform:translateY(-1px)}
+.chip.sa{background:rgba(91,91,255,.18);border-color:rgba(91,91,255,.45);color:rgba(180,180,255,.95);font-weight:600}
+.chip.sc{background:rgba(255,77,141,.14);border-color:rgba(255,77,141,.38);color:rgba(255,160,200,.95);font-weight:600}
+.conf-badge{display:flex;align-items:center;gap:8px;margin-top:12px;padding:9px 13px;border-radius:8px;font-size:12px;font-weight:500;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);color:rgba(255,255,255,.22);transition:all .3s}
+.conf-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.18);flex-shrink:0}
+.period-block.has-sel .conf-badge{background:rgba(91,91,255,.08);border-color:rgba(91,91,255,.2);color:rgba(150,150,255,.8)}
+.period-block.has-sel .conf-dot{background:var(--indigo);box-shadow:0 0 6px var(--indigo)}
+.period-block.has-sel.cb .conf-badge{background:rgba(255,77,141,.07);border-color:rgba(255,77,141,.18);color:rgba(255,160,200,.8)}
+.period-block.has-sel.cb .conf-dot{background:var(--rose);box-shadow:0 0 6px var(--rose)}
+.q-nav{display:flex;gap:10px;margin-top:28px;justify-content:space-between;align-items:center}
+
+/* TRANSITION */
+.trans-page{flex:1;display:flex;align-items:center;justify-content:center;padding:80px 24px}
+.trans-shell{text-align:center;max-width:480px}
+.trans-orb{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--violet),var(--rose));margin:0 auto 24px;display:flex;align-items:center;justify-content:center;font-size:28px;box-shadow:0 0 50px rgba(155,91,255,.4);animation:float 4s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.trans-heading{font-family:'Fraunces',serif;font-size:34px;font-weight:700;color:#fff;letter-spacing:-1px;line-height:1.1;margin-bottom:12px}
+.trans-heading em{font-style:italic;font-weight:300;color:rgba(255,255,255,.4)}
+.trans-body{font-size:15px;color:rgba(255,255,255,.38);line-height:1.65;margin-bottom:28px}
+
+/* CONTEXT PAGE */
+.ctx-page{flex:1;display:flex;flex-direction:column;padding-top:60px}
+.ctx-shell{flex:1;max-width:620px;width:100%;margin:0 auto;padding:36px 22px 60px}
+.ctx-heading{font-family:'Fraunces',serif;font-size:30px;font-weight:700;color:#fff;letter-spacing:-1px;margin-bottom:8px;line-height:1.1}
+.ctx-heading em{font-style:italic;font-weight:300;color:rgba(255,255,255,.38)}
+.ctx-sub{font-size:14px;color:rgba(255,255,255,.32);margin-bottom:28px;line-height:1.6}
+.ctx-section-lbl{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.22);margin-bottom:10px;margin-top:22px}
+.ctx-section-lbl:first-of-type{margin-top:0}
+.ctx-item{display:flex;align-items:flex-start;gap:13px;padding:14px 16px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.06);border-radius:12px;cursor:pointer;margin-bottom:7px;transition:all .2s var(--ease-spring)}
+.ctx-item:hover{background:rgba(255,255,255,.05);transform:translateX(2px)}
+.ctx-item.ca{background:rgba(91,91,255,.1);border-color:rgba(91,91,255,.28)}
+.ctx-item.cc{background:rgba(255,77,141,.08);border-color:rgba(255,77,141,.23)}
+.ctx-chk{width:20px;height:20px;border-radius:6px;border:2px solid rgba(255,255,255,.14);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:12px;color:transparent;transition:all .2s var(--ease-spring)}
+.ctx-item.ca .ctx-chk{background:var(--indigo);border-color:var(--indigo);color:#fff;box-shadow:0 0 10px rgba(91,91,255,.4)}
+.ctx-item.cc .ctx-chk{background:var(--rose);border-color:var(--rose);color:#fff;box-shadow:0 0 10px rgba(255,77,141,.4)}
+.ctx-text{font-size:14px;color:rgba(255,255,255,.5);line-height:1.5}
+.ctx-item.ca .ctx-text{color:rgba(180,180,255,.82)}
+.ctx-item.cc .ctx-text{color:rgba(255,160,200,.82)}
+.onset-row{display:flex;gap:10px;margin-top:6px}
+.onset-btn{flex:1;padding:13px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:rgba(255,255,255,.4);text-align:center;transition:all .2s var(--ease-spring)}
+.onset-btn:hover{background:rgba(255,255,255,.08);color:rgba(255,255,255,.8)}
+.onset-btn.ay{background:rgba(34,200,138,.12);border-color:rgba(34,200,138,.32);color:rgba(34,200,138,.9)}
+.onset-btn.an{background:rgba(255,180,64,.1);border-color:rgba(255,180,64,.28);color:rgba(255,180,64,.9)}
+
+/* SAVING / DONE */
+.saving-page{flex:1;display:flex;align-items:center;justify-content:center;padding:60px 24px;text-align:center}
+.saving-shell{max-width:420px}
+.saving-orb{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--emerald),var(--indigo));margin:0 auto 22px;display:flex;align-items:center;justify-content:center;font-size:28px;box-shadow:0 0 50px rgba(34,200,138,.35)}
+.saving-title{font-family:'Fraunces',serif;font-size:30px;font-weight:700;color:#fff;letter-spacing:-1px;margin-bottom:10px}
+.saving-sub{font-size:15px;color:rgba(255,255,255,.38);line-height:1.65}
+
+/* ERROR PAGE */
+.err-page{flex:1;display:flex;align-items:center;justify-content:center;padding:60px 24px;text-align:center}
+.err-shell{max-width:400px}
+.err-icon{font-size:52px;margin-bottom:20px}
+.err-title{font-family:'Fraunces',serif;font-size:28px;font-weight:700;color:#fff;letter-spacing:-1px;margin-bottom:10px}
+.err-sub{font-size:14px;color:rgba(255,255,255,.35);line-height:1.65}
+
+/* RESULT */
+.result-page{flex:1;display:flex;flex-direction:column;padding-top:60px}
+.result-shell{flex:1;max-width:680px;width:100%;margin:0 auto;padding:36px 22px 80px}
+.res-hero{text-align:center;padding:40px 28px 36px;border-radius:22px;margin-bottom:20px;position:relative;overflow:hidden}
+.res-hero.open{background:radial-gradient(ellipse at 50% 0%,rgba(91,91,255,.18) 0%,rgba(34,200,138,.07) 60%,transparent 100%);border:1px solid rgba(91,91,255,.18)}
+.res-hero.explore{background:radial-gradient(ellipse at 50% 0%,rgba(255,180,64,.13) 0%,transparent 70%);border:1px solid rgba(255,180,64,.18)}
+.res-hero.calm{background:radial-gradient(ellipse at 50% 0%,rgba(255,255,255,.04) 0%,transparent 70%);border:1px solid rgba(255,255,255,.08)}
+.res-orb{width:66px;height:66px;border-radius:50%;margin:0 auto 18px;display:flex;align-items:center;justify-content:center;font-size:26px}
+.res-orb.open{background:linear-gradient(135deg,var(--emerald),var(--indigo));box-shadow:0 0 44px rgba(34,200,138,.3)}
+.res-orb.explore{background:linear-gradient(135deg,var(--amber),var(--rose));box-shadow:0 0 44px rgba(255,180,64,.28)}
+.res-orb.calm{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)}
+.res-headline{font-family:'Fraunces',serif;font-size:26px;font-weight:700;color:#fff;letter-spacing:-.5px;line-height:1.15;margin-bottom:8px}
+.res-subline{font-size:13px;color:rgba(255,255,255,.35);margin-bottom:16px}
+.score-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px}
+@media(max-width:520px){.score-row{grid-template-columns:1fr 1fr}}
+.stile{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:14px 10px;text-align:center}
+.stile.met{border-color:rgba(34,200,138,.28);background:rgba(34,200,138,.07)}
+.stile.partial{border-color:rgba(255,180,64,.22);background:rgba(255,180,64,.06)}
+.stile .snum{font-size:28px;font-weight:800;line-height:1;margin-bottom:3px}
+.stile.met .snum{color:var(--emerald)}
+.stile.partial .snum{color:var(--amber)}
+.stile:not(.met):not(.partial) .snum{color:rgba(255,255,255,.28)}
+.stile .sden{font-size:13px;opacity:.4}
+.stile .slbl{font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:2px}
+.stile .sthr{font-size:9px;color:rgba(255,255,255,.16);margin-top:3px}
+.icard{border-radius:14px;padding:24px;margin-bottom:14px;border:1px solid}
+.icard.open{border-color:rgba(91,91,255,.18);background:rgba(91,91,255,.05)}
+.icard.explore{border-color:rgba(255,180,64,.18);background:rgba(255,180,64,.04)}
+.icard.calm{border-color:rgba(255,255,255,.07);background:rgba(255,255,255,.02)}
+.icard.action{border-color:rgba(155,91,255,.18);background:rgba(155,91,255,.05)}
+.ic-hdr{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.ic-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.ic-dot.open{background:var(--emerald);box-shadow:0 0 7px var(--emerald)}
+.ic-dot.explore{background:var(--amber);box-shadow:0 0 7px var(--amber)}
+.ic-dot.calm{background:rgba(255,255,255,.28)}
+.ic-dot.action{background:var(--violet);box-shadow:0 0 7px var(--violet)}
+.ic-title{font-size:14px;font-weight:700;color:#fff}
+.ic-body{font-size:13px;color:rgba(255,255,255,.45);line-height:1.75}
+.ic-body strong{color:rgba(255,255,255,.78);font-weight:600}
+.ic-body p+p{margin-top:10px}
+.crit-card{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:18px;margin-bottom:14px}
+.crit-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.crit-row:last-child{border-bottom:none}
+.crit-check{font-size:15px;flex-shrink:0}
+.crit-text{font-size:12px;color:rgba(255,255,255,.45);line-height:1.4;flex:1}
+.crit-text strong{color:rgba(255,255,255,.72);font-weight:600}
+.sec-title{font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:rgba(255,255,255,.22);margin-bottom:12px;margin-top:24px;display:flex;align-items:center;gap:10px}
+.sec-title::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.05)}
+.sym-item{border-radius:12px;overflow:hidden;margin-bottom:8px;border:1px solid rgba(255,255,255,.05);background:rgba(255,255,255,.015);transition:all .2s}
+.sym-item.present{border-color:rgba(91,91,255,.16)}
+.sym-hdr{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer}
+.sym-hdr:hover{background:rgba(255,255,255,.03)}
+.sym-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.sym-dot.both{background:var(--emerald);box-shadow:0 0 5px var(--emerald)}
+.sym-dot.adult{background:var(--indigo);box-shadow:0 0 5px var(--indigo)}
+.sym-dot.child{background:var(--rose);box-shadow:0 0 5px var(--rose)}
+.sym-dot.none{background:rgba(255,255,255,.14)}
+.sym-name{font-size:13px;font-weight:600;flex:1;color:rgba(255,255,255,.65)}
+.sym-item:not(.present) .sym-name{color:rgba(255,255,255,.22)}
+.sym-badges{display:flex;gap:5px}
+.sym-badge{font-size:9px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;padding:2px 7px;border-radius:99px}
+.sym-badge.sa{background:rgba(91,91,255,.18);color:rgba(150,150,255,.9)}
+.sym-badge.sc{background:rgba(255,77,141,.14);color:rgba(255,140,185,.9)}
+.sym-badge.no{background:rgba(255,255,255,.05);color:rgba(255,255,255,.18)}
+.sym-arrow{font-size:11px;color:rgba(255,255,255,.18);transition:transform .2s;margin-left:3px}
+.sym-item.open .sym-arrow{transform:rotate(180deg)}
+.sym-body{display:none;padding:0 14px 14px;border-top:1px solid rgba(255,255,255,.05);padding-top:12px}
+.sym-item.open .sym-body{display:block}
+.sym-chips-lbl{font-size:9px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:rgba(255,255,255,.18);margin-bottom:6px}
+.sym-chips-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+.sym-chip{font-size:11px;padding:3px 9px;border-radius:99px}
+.sym-chip.a{background:rgba(91,91,255,.14);border:1px solid rgba(91,91,255,.22);color:rgba(160,160,255,.82)}
+.sym-chip.c{background:rgba(255,77,141,.11);border:1px solid rgba(255,77,141,.2);color:rgba(255,150,190,.82)}
+.sym-why{font-size:12px;color:rgba(255,255,255,.3);line-height:1.65;margin-top:8px}
+.sym-why strong{color:rgba(255,255,255,.52)}
+.res-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:28px}
+.res-footer{text-align:center;font-size:11px;color:rgba(255,255,255,.14);line-height:1.7;padding:18px;margin-top:16px}
+.res-footer strong{color:rgba(255,255,255,.22)}
+
+@media print{
+  #pnav,.q-nav,.form-nav,.instr-nav,.res-actions{display:none!important}
+  body{background:#fff;color:#000}
+  .page{display:block!important}
+}
+</style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+<div id="app">
+  <nav id="pnav">
+    <div class="nav-logo">DIVA<span>·5</span></div>
+    <div class="nav-bar-wrap"><div class="nav-bar-fill" id="navFill" style="width:0%"></div></div>
+    <div class="nav-pct" id="navPct">0%</div>
+  </nav>
+</div>
+
+<script>
+// ─── BACKGROUND ─────────────────────────────────
+(function(){
+  const c=document.getElementById('bg-canvas'),ctx=c.getContext('2d');
+  let W,H,orbs,t=0;
+  function resize(){W=c.width=window.innerWidth;H=c.height=window.innerHeight}
+  orbs=[{x:.15,y:.2,r:320,col:'#5b5bff',a:.08,vx:.0002,vy:.0001},{x:.85,y:.15,r:280,col:'#9b5bff',a:.07,vx:-.0001,vy:.00015},{x:.5,y:.8,r:350,col:'#ff4d8d',a:.06,vx:.00015,vy:-.0001},{x:.2,y:.75,r:220,col:'#22c88a',a:.05,vx:.00012,vy:.00008}];
+  function hexA(hex,a){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return `rgba(${r},${g},${b},${a})`}
+  function draw(){ctx.clearRect(0,0,W,H);ctx.fillStyle='#0c0c1e';ctx.fillRect(0,0,W,H);orbs.forEach(o=>{const x=(o.x+Math.sin(t*o.vx*W)*.06)*W,y=(o.y+Math.cos(t*o.vy*H)*.06)*H,g=ctx.createRadialGradient(x,y,0,x,y,o.r);g.addColorStop(0,hexA(o.col,o.a));g.addColorStop(1,hexA(o.col,0));ctx.fillStyle=g;ctx.fillRect(0,0,W,H)});t++;requestAnimationFrame(draw)}
+  window.addEventListener('resize',resize);resize();draw();
+})();
+
+// ─── DATA ────────────────────────────────────────
+const QDA=[
+  {id:'A1',label:'A1 — Atenção aos detalhes',tA:'Você com frequência não presta atenção suficiente aos detalhes ou comete erros por distração?',tC:'Como era durante sua infância (na escola ou em outras atividades)?',wA:'Dificuldade com detalhes é um dos sinais mais clássicos do déficit de atenção. Não se trata de descuido — o cérebro com TDAH tem dificuldade em sustentar o foco em informações precisas, gerando erros mesmo em pessoas inteligentes e dedicadas.',wC:'Quando esse padrão aparece já na infância, sugere origem neurobiológica — não preguiça ou falta de motivação.',exA:['Cometo erros por distração','Preciso trabalhar devagar para evitar erros','Não leio instruções com atenção','Não me saio bem em trabalhos detalhados','Preciso de muito tempo para detalhes','Me perco nos detalhes','Trabalho rápido e acabo errando'],exC:['Cometia erros de distração nos trabalhos escolares','Errava por ler mal as perguntas','Deixava perguntas sem responder','Não via perguntas no verso das provas','Os outros comentavam sobre meu trabalho descuidado','Não revia as respostas dos trabalhos de casa']},
+  {id:'A2',label:'A2 — Manter a concentração',tA:'Você com frequência tem dificuldade em se manter concentrado durante as tarefas?',tC:'Como era durante sua infância (em jogos ou atividades)?',wA:'Manter o foco ao longo do tempo é o principal desafio do TDAH. O cérebro busca novidade e estimulação constante — isso é fisiológico, envolvendo o funcionamento da dopamina no córtex pré-frontal.',wC:'Dificuldade de sustentar atenção que começa na infância e persiste na vida adulta é um dos critérios centrais do diagnóstico de TDAH.',exA:['Não consigo manter atenção por muito tempo','Me distraio com meus próprios pensamentos','Tenho dificuldade de ver um filme até o fim','Fico entediado(a) rapidamente','Faço perguntas sobre coisas já discutidas'],exC:['Tinha dificuldade em prestar atenção nas tarefas','Tinha dificuldade em me manter atento(a) aos jogos','Me distraía com facilidade','Precisava de ambiente muito estruturado','Ficava entediado(a) rapidamente']},
+  {id:'A3',label:'A3 — Parece não estar ouvindo',tA:'Você com frequência parece não estar ouvindo quando alguém fala diretamente com você?',tC:'Como era durante sua infância?',wA:'Não é falta de respeito — o cérebro pode estar ativo em "outro canal" e ter dificuldade de mudar o foco voluntariamente para a conversa.',wC:'Pais e professores frequentemente interpretam como teimosia, quando na verdade reflete dificuldade real de direcionar e manter a atenção.',exA:['Divago ou pareço ausente em conversas','Tenho dificuldade de me concentrar em uma conversa','Depois de conversar, não sei do que se falou','Mudo frequentemente o assunto','As pessoas dizem que estou com a cabeça nas nuvens'],exC:['Não me lembrava do que pais ou professores diziam','Ficava frequentemente "sonhando acordado(a)"','Só prestava atenção se levantassem a voz','Precisava ser chamado(a) mais de uma vez','As perguntas precisavam ser repetidas']},
+  {id:'A4',label:'A4 — Não terminar tarefas',tA:'Você com frequência não segue instruções ou não consegue terminar tarefas e obrigações?',tC:'Como era durante sua infância (na escola)?',wA:'Começar é fácil — manter o engajamento até o fim é o desafio. O TDAH afeta a função executiva responsável por completar sequências, especialmente quando a tarefa deixou de ser nova.',wC:'Dificuldade em concluir tarefas na infância é sinal precoce e consistente de comprometimento das funções executivas.',exA:['Faço várias coisas ao mesmo tempo e não termino nenhuma','Tenho dificuldade de finalizar algo que não é mais novidade','Preciso de prazo-limite para terminar as coisas','Tenho dificuldade com tarefas administrativas','Tenho dificuldade em seguir manuais'],exC:['Tinha dificuldade de terminar as tarefas a tempo','Meu quarto e mesa ficavam sempre bagunçados','Tinha dificuldade de planejar tarefas','Fazia várias coisas ao mesmo tempo','Chegava atrasado(a) com frequência']},
+  {id:'A5',label:'A5 — Dificuldade de organização',tA:'Você com frequência tem dificuldade para organizar tarefas e atividades?',tC:'Como era durante sua infância?',wA:'Organização depende de funções executivas processadas no córtex pré-frontal, sub-regulado no TDAH. Não é preguiça — é uma dificuldade neurobiológica real.',wC:'Desorganização que aparece na infância e persiste é evidência forte de base neurobiológica.',exA:['Tenho dificuldade de gerenciar tarefas sequenciais','Minha casa e/ou trabalho são desorganizados','Trabalho de forma bagunçada','Confirmo dois compromissos no mesmo horário','Chego atrasado(a) ou perco prazos','Não consigo usar agenda de forma consistente','Tenho má percepção do tempo'],exC:['Tinha dificuldade de planejar o dia a dia','Raramente estava pronto(a) a tempo','Meu quarto e mesa ficavam desarrumados','Tinha dificuldade de manter as coisas em ordem','Tinha má noção do tempo']},
+  {id:'A6',label:'A6 — Evitar esforço mental',tA:'Você com frequência evita ou reluta em se envolver em tarefas que exijam esforço mental contínuo?',tC:'Como era durante sua infância?',wA:'O cérebro com TDAH tem dificuldade em gerar dopamina suficiente para tarefas monótonas. A evitação não é preguiça — é uma resposta neurológica real.',wC:'A aversão a tarefas de esforço mental sustentado é um dos marcadores mais consistentes de TDAH na infância, frequentemente confundida com desmotivação.',exA:['Faço primeiro o que é mais fácil ou divertido','Fico adiando tarefas entediantes','Adio e com isso perco prazos','Evito trabalhos monótonos ou administrativos','Evito preparar relatórios ou preencher formulários','Não gosto de ler por exigir muito esforço'],exC:['Evitava ou detestava os trabalhos de casa','Lia poucos livros ou não gostava de ler','Evitava coisas que exigiam concentração','Detestava matérias que exigiam muito foco','Ficava adiando tarefas difíceis']},
+  {id:'A7',label:'A7 — Perder objetos',tA:'Você com frequência perde objetos necessários para as tarefas ou atividades?',tC:'Como era durante sua infância?',wA:'A memória de trabalho — responsável por manter informações ativas — é frequentemente comprometida no TDAH. Perder objetos é um reflexo direto dessa dificuldade.',wC:'Perder materiais com frequência desde criança é sinal forte de comprometimento da memória de trabalho.',exA:['Perco carteira, chaves ou agenda','Frequentemente deixo coisas para trás','Perco papéis do trabalho','Perco muito tempo procurando coisas','Coloco coisas nos lugares errados'],exC:['Perdia agenda, canetas ou materiais escolares','Perdia roupas, brinquedos ou trabalhos de casa','Perdia muito tempo procurando coisas','Ficava em pânico quando alguém mudava coisas de lugar']},
+  {id:'A8',label:'A8 — Distração por estímulos externos',tA:'Você com frequência se distrai facilmente com estímulos externos?',tC:'Como era durante sua infância?',wA:'O cérebro com TDAH tem filtro sensorial menos eficiente. Em vez de ignorar automaticamente os estímulos irrelevantes, ele os processa com atenção semelhante.',wC:'A distração frequente é um dos sinais mais visíveis do TDAH na infância e o que mais chama atenção de pais e professores.',exA:['Tenho dificuldade de ignorar estímulos ao redor','Depois de me distrair, tenho dificuldade de voltar','Me distraio com barulhos ou movimentos ao redor','Fico ouvindo as conversas dos outros sem querer','Tenho dificuldade de filtrar informações irrelevantes'],exC:['Na aula, ficava olhando pela janela','Me distraía facilmente com barulhos','Depois de me distrair, tinha dificuldade de voltar']},
+  {id:'A9',label:'A9 — Esquecer atividades do dia a dia',tA:'Você com frequência esquece atividades do dia a dia?',tC:'Como era durante sua infância?',wA:'Esquecimentos frequentes são consequência do comprometimento da memória prospectiva. Podem causar prejuízos significativos no trabalho e nos relacionamentos.',wC:'O padrão de esquecimentos na infância é indicador confiável de dificuldades de memória de trabalho relacionadas ao TDAH.',exA:['Esqueço compromissos ou obrigações','Esqueço chaves, agenda e outros itens','Preciso ser constantemente lembrado(a)','Esqueço de pagar contas ou retornar ligações','Preciso voltar para pegar coisas esquecidas','Uso listas rígidas para não esquecer'],exC:['Esquecia compromissos ou instruções','Esquecia de fazer tarefas ou dar recados','Precisava ser lembrado(a) com frequência','No meio de uma tarefa, esquecia o que fazer']},
+];
+const QHI=[
+  {id:'HI1',label:'HI1 — Agitação motora sentado',tA:'Você com frequência mexe de forma irrequieta as mãos ou os pés, ou se remexe na cadeira?',tC:'Como era durante sua infância?',wA:'A inquietação motora é uma manifestação física da hiperatividade neurológica. O corpo busca estimulação para compensar a sub-regulação do sistema nervoso.',wC:'Dificuldade de ficar quieto é um dos sinais mais marcantes da hiperatividade na infância.',exA:['Tenho dificuldade de ficar sentado(a) quieto(a)','Fico balançando as pernas','Bato com a caneta ou mexo em objetos','Roo as unhas ou mexo no cabelo','Consigo controlar, mas fico ainda mais tenso(a)'],exC:['Meus pais diziam para eu ficar quieto(a)','Balançava as pernas','Batia com a caneta ou brincava com objetos','Roia unhas ou mexia no cabelo','Não conseguia ficar sentado(a) normalmente']},
+  {id:'HI2',label:'HI2 — Levantar-se em situações inadequadas',tA:'Você com frequência se levanta do lugar em situações em que é esperado que permaneça sentado?',tC:'Como era durante sua infância?',wA:'A necessidade de movimento é uma característica neurobiológica do TDAH. Permanecer sentado por longos períodos requer esforço enorme e pode ser esgotante.',wC:'Levantar constantemente em sala de aula ou durante refeições é um dos comportamentos mais característicos da hiperatividade infantil.',exA:['Saio frequentemente do meu lugar no trabalho','Evito palestras e cultos — fico desconfortável','Prefiro andar em vez de ficar sentado(a)','Nunca fico parado(a) por muito tempo'],exC:['Levantava enquanto comia ou saía do lugar na sala','Era chamado(a) à atenção para ficar sentado(a)','Dava desculpas para andar por aí']},
+  {id:'HI3',label:'HI3 — Sentir-se irrequieto por dentro',tA:'Você com frequência se sente irrequieto(a) ou agitado(a) por dentro, mesmo sem se mover muito?',tC:'Como era durante sua infância?',wA:'Em adultos, a hiperatividade motora da infância frequentemente se internaliza: o corpo fica mais quieto, mas a mente continua acelerada — o que é cansativo e muitas vezes confundido com ansiedade.',wC:'Na infância, essa agitação tende a ser física e visível. Reconhecer esse padrão histórico ajuda a conectar com o que persiste na vida adulta.',exA:['Sinto-me irrequieto(a) ou agitado(a) por dentro','Tenho a sensação de precisar estar sempre ocupado(a)','Tenho dificuldade de relaxar'],exC:['Estava sempre correndo','Subia em móveis ou saltava sobre cadeiras','Subia em árvores','Sentia-me agitado(a) por dentro']},
+  {id:'HI4',label:'HI4 — Dificuldade em lazer calmo',tA:'Você com frequência tem dificuldade em se dedicar calmamente a atividades de lazer?',tC:'Como era durante sua infância nas atividades de lazer?',wA:'O cérebro com TDAH tem dificuldade em "desacelerar" voluntariamente. O lazer pode se tornar fonte de inquietação quando envolve atividades calmas.',wC:'Barulho, agitação e dificuldade de brincar tranquilamente são marcadores comuns de hiperatividade na infância.',exA:['Falo durante atividades quando não seria adequado','Em público, tendo a chamar atenção','Tenho dificuldade de fazer atividades sossegadamente','Tenho dificuldade de falar baixo'],exC:['Era barulhento(a) durante jogos ou na aula','Não conseguia assistir TV sossegado(a)','Era repreendido(a) para ficar mais quieto(a)','Em público, tendia a me destacar']},
+  {id:'HI5',label:'HI5 — "A mil por hora"',tA:'Você com frequência age como se estivesse "a mil por hora" ou ligado(a) a um motor?',tC:'Como era durante sua infância?',wA:'Essa sensação de aceleração interna é uma das formas mais expressivas da hiperatividade em adultos. Pode ser percebida como energia, mas também como incapacidade de "pausar" — gerando esgotamento.',wC:'Nível de atividade acima do esperado para a idade, que parece não ter um botão de "off", é um dos critérios mais robustos de hiperatividade na infância.',exA:['Estou sempre fazendo alguma coisa','Sinto desconforto em ficar parado(a) em restaurantes ou reuniões','Tenho muita energia, estou sempre em movimento','Os outros me acham inquieto(a) ou difícil de acompanhar'],exC:['Estava constantemente ocupado(a)','Os outros me achavam inquieto(a)','Tinha excesso de atividade na escola e em casa','Tinha muita energia']},
+  {id:'HI6',label:'HI6 — Falar excessivamente',tA:'Você com frequência fala excessivamente?',tC:'Como era durante sua infância?',wA:'Falar muito e com rapidez é uma manifestação da impulsividade verbal. O pensamento "transborda" antes de ser filtrado.',wC:'Ser "tagarela" ou falar sem parar é sinal frequente de TDAH na infância, muitas vezes punido sem que a causa real seja entendida.',exA:['Falo tão agitado(a) que os outros me acham cansativo(a)','Tenho fama de ser muito falador(a)','Tenho dificuldade de parar de falar','Não deixo os outros falarem na conversa'],exC:['Tinha fama de ser tagarela','Professores e pais mandavam eu me calar frequentemente','Era punido(a) por falar demais','Distraía os outros com conversas']},
+  {id:'HI7',label:'HI7 — Responder antes da pergunta terminar',tA:'Você com frequência dá respostas antes que as perguntas sejam concluídas?',tC:'Como era durante sua infância?',wA:'A impulsividade verbal é diretamente relacionada ao déficit de inibição de resposta — uma das funções executivas mais comprometidas no TDAH. Não é falta de educação.',wC:'Querer ser o(a) primeiro(a) a responder e interromper são manifestações precoces de impulsividade.',exA:['Falo impulsivamente, sem pensar antes','Digo o que me vem à cabeça','Respondo sem deixar o outro terminar','Completo as frases dos outros','Sou visto(a) como indelicado(a) ou sem tato'],exC:['Era tagarela, dizia coisas sem pensar','Queria ser o(a) primeiro(a) a responder','Dizia a primeira resposta, mesmo errada','Interrompia os outros antes de terminarem']},
+  {id:'HI8',label:'HI8 — Dificuldade em esperar a vez',tA:'Você com frequência tem dificuldade em esperar sua vez?',tC:'Como era durante sua infância?',wA:'A tolerância à frustração e a capacidade de aguardar dependem do controle inibitório. A impaciência no TDAH é fisiológica — não é defeito de caráter.',wC:'Impaciência em filas, em jogos em grupo e em sala de aula é sinal clássico de impulsividade infantil.',exA:['Tenho dificuldade de esperar em filas','Fico impaciente no trânsito','Sou impaciente de forma geral','Inicio ou abandono empregos e relacionamentos por impaciência'],exC:['Tinha dificuldade de esperar minha vez em grupo','Queria ser sempre o(a) primeiro(a) a falar','Me tornava impaciente com facilidade','Atravessava a rua sem olhar']},
+  {id:'HI9',label:'HI9 — Interromper ou se intrometer',tA:'Você com frequência interrompe ou se intromete nas atividades dos outros?',tC:'Como era durante sua infância?',wA:'Interromper e se meter em assuntos alheios são expressões de impulsividade social — dificuldade de inibir respostas e gerenciar o momento certo de agir.',wC:'A intromissão em jogos e conversas alheias leva a conflitos e rejeição por pares — gerando cicatrizes emocionais que persistem na vida adulta.',exA:['Me meto facilmente nos assuntos dos outros','Interrompo os outros durante conversas','Os outros comentam que sou intrometido(a)','Tenho opinião sobre tudo e a expresso na hora'],exC:['Me intrometia nos jogos dos outros','Interrompia as conversas dos outros','Reagia a tudo','Não conseguia esperar']},
+];
+
+// ─── STATE ───────────────────────────────────────
+const S={selA:{},selC:{},ctxA:[],ctxC:[],onset:null,cur:0,total:0,token:null,patientName:''};
+const sA=id=>S.selA[id]||[];
+const sC=id=>S.selC[id]||[];
+const pA=id=>sA(id).length>0;
+const pC=id=>sC(id).length>0;
+
+// ─── TOKEN DETECTION ─────────────────────────────
+const pathParts = window.location.pathname.split('/');
+const TOKEN = pathParts[pathParts.length-1];
+
+// ─── PAGE SYSTEM ─────────────────────────────────
+function addPage(id,html){
+  const div=document.createElement('div');
+  div.className='page';div.id='page-'+id;div.innerHTML=html;
+  document.getElementById('app').appendChild(div);
+}
+
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const t=document.getElementById('page-'+id);
+  if(t){t.classList.add('active');S.cur=id;window.scrollTo({top:0,behavior:'smooth'});}
+  updateNav();
+}
+
+function updateNav(){
+  const nav=document.getElementById('pnav');
+  if(S.cur===0){nav.classList.remove('on');return;}
+  nav.classList.add('on');
+  const pct=Math.round((S.cur/(S.total-1))*100);
+  document.getElementById('navFill').style.width=pct+'%';
+  document.getElementById('navPct').textContent=pct+'%';
+}
+
+// ─── BUILD PAGES ─────────────────────────────────
+function buildQPage(q,pg,isHI){
+  const badge=isHI?`<span class="q-badge hi">⚡ Hiperatividade</span>`:`<span class="q-badge">🎯 Déficit de Atenção</span>`;
+  const tot=isHI?QHI.length:QDA.length;
+  const idx=isHI?pg-13+1:pg-3+1;
+  addPage(pg,`
+  <div class="q-page"><div class="q-shell">
+    <div class="q-eyebrow">${badge}<span class="q-num">${idx} de ${tot}</span></div>
+    <h2 class="q-title">${q.label.replace(/^[A-Z0-9\/]+ — /,'')}</h2>
+    <div class="period-block" id="pba_${q.id}">
+      <div class="period-hdr"><div class="period-dot"></div><div class="period-lbl">Vida adulta — últimos 6 meses</div><div class="period-cnt" id="cnt_a_${q.id}">0 selecionados</div></div>
+      <div class="period-q">${q.tA}</div>
+      <div class="chips-wrap">${q.exA.map((e,i)=>`<span class="chip" id="chip_a_${q.id}_${i}" onclick="toggleChip('${q.id}','a',${i})">${e}</span>`).join('')}</div>
+      <div class="conf-badge"><div class="conf-dot"></div><span id="cft_a_${q.id}">Nenhum exemplo selecionado</span></div>
+    </div>
+    <div class="period-block cb" id="pbc_${q.id}">
+      <div class="period-hdr"><div class="period-dot"></div><div class="period-lbl">Infância — entre 5 e 12 anos</div><div class="period-cnt" id="cnt_c_${q.id}">0 selecionados</div></div>
+      <div class="period-q">${q.tC}</div>
+      <div class="chips-wrap">${q.exC.map((e,i)=>`<span class="chip" id="chip_c_${q.id}_${i}" onclick="toggleChip('${q.id}','c',${i})">${e}</span>`).join('')}</div>
+      <div class="conf-badge"><div class="conf-dot"></div><span id="cft_c_${q.id}">Nenhum exemplo selecionado</span></div>
+    </div>
+    <div class="q-nav">
+      <button class="btn btn-ghost" onclick="showPage(${pg-1})">← Anterior</button>
+      <button class="btn btn-primary" onclick="showPage(${pg+1})">Próximo <span class="btn-icon">→</span></button>
+    </div>
+  </div></div>`);
+}
+
+// ─── INTERACTIONS ─────────────────────────────────
+function toggleChip(qId,period,idx){
+  const store=period==='a'?S.selA:S.selC;
+  if(!store[qId])store[qId]=[];
+  const arr=store[qId],pos=arr.indexOf(idx);
+  if(pos>=0)arr.splice(pos,1);else arr.push(idx);
+  document.getElementById(`chip_${period}_${qId}_${idx}`)?.classList.toggle(period==='a'?'sa':'sc',arr.includes(idx));
+  const block=document.getElementById(`pb${period}_${qId}`);
+  const cnt=document.getElementById(`cnt_${period}_${qId}`);
+  const cft=document.getElementById(`cft_${period}_${qId}`);
+  const hasSel=arr.length>0;
+  if(block){block.classList.toggle('has-sel',hasSel);if(period==='c')block.classList.add('cb');}
+  if(cnt)cnt.textContent=hasSel?`${arr.length} selecionado${arr.length>1?'s':''}`:' 0 selecionados';
+  if(cft)cft.textContent=hasSel?`${arr.length} exemplo${arr.length>1?'s':''} identificado${arr.length>1?'s':''} ✓`:'Nenhum exemplo selecionado';
+  updateNav();
+}
+
+function toggleCtx(period,idx){
+  const arr=period==='a'?S.ctxA:S.ctxC;
+  const item=document.getElementById(`ctx${period==='a'?'A':'C'}_${idx}`);
+  const chk=document.getElementById(`ctxChk_${period}_${idx}`);
+  const pos=arr.indexOf(idx);
+  if(pos>=0){arr.splice(pos,1);item.classList.remove(`c${period}`);}
+  else{arr.push(idx);item.classList.add(`c${period}`);}
+}
+
+function setOnset(val){
+  S.onset=val;
+  document.getElementById('onset_yes').className=`onset-btn${val?' ay':''}`;
+  document.getElementById('onset_no').className=`onset-btn${!val?' an':''}`;
+}
+
+// ─── SCORING ──────────────────────────────────────
+function calcScores(){
+  let daA=0,daC=0,hiA=0,hiC=0;
+  QDA.forEach(q=>{if(pA(q.id))daA++;if(pC(q.id))daC++;});
+  QHI.forEach(q=>{if(pA(q.id))hiA++;if(pC(q.id))hiC++;});
+  return{daA,daC,hiA,hiC};
+}
+
+// ─── SAVE & SHOW RESULT ───────────────────────────
+async function finishAndSave(){
+  const scores=calcScores();
+  const{daA,daC,hiA,hiC}=scores;
+  const ctxA=S.ctxA.length,ctxC=S.ctxC.length;
+  const adultMeetsDA=daA>=5,adultMeetsHI=hiA>=5;
+  const childMeets=daC>=3||hiC>=3;
+  const adultMeets=adultMeetsDA||adultMeetsHI;
+  const hasImpact=ctxA>=2;
+  const earlyOnset=S.onset===true||childMeets;
+  const isPositive=adultMeets&&hasImpact&&earlyOnset;
+  const isPossible=adultMeets&&!isPositive;
+  let presType='';
+  if(adultMeetsDA&&adultMeetsHI)presType='314.01 Apresentação Combinada';
+  else if(adultMeetsDA)presType='314.00 Apresentação Predominantemente Desatenta';
+  else if(adultMeetsHI)presType='314.01 Apresentação Predominantemente Hiperativa-Impulsiva';
+
+  const patData={
+    nome:document.getElementById('f_nome')?.value||S.patientName||'',
+    nasc:document.getElementById('f_nasc')?.value||'',
+    sexo:document.getElementById('f_sexo')?.value||'',
+    esc:document.getElementById('f_esc')?.value||'',
+    prof:document.getElementById('f_prof')?.value||'',
+    data:document.getElementById('f_data')?.value||new Date().toLocaleDateString('pt-BR'),
+  };
+
+  const resultObj={isPositive,isPossible,presType,adultMeets,childMeets,hasImpact,earlyOnset,ctxA,ctxC};
+
+  // Mostrar tela salvando
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-saving').classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+
+  try{
+    await fetch(`/api/report/${TOKEN}`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({answers:{selA:S.selA,selC:S.selC},scores,result:resultObj,patientData:patData})
+    });
+  }catch(e){console.warn('Erro ao salvar:',e);}
+
+  // Aguardar 1.5s e mostrar resultado
+  setTimeout(()=>buildAndShowResult(scores,resultObj,patData),1500);
+}
+
+function buildAndShowResult(scores,r,pd){
+  const{daA,daC,hiA,hiC}=scores;
+  const{isPositive,isPossible,presType,ctxA}=r;
+  const insightCls=isPositive?'open':isPossible?'explore':'calm';
+  const insightTitle=isPositive?'Perfil compatível com TDAH':isPossible?'Perfil parcialmente sugestivo':'Abaixo do limiar diagnóstico';
+
+  let insightText='';
+  if(isPositive){
+    insightText=`<p>Sua avaliação mostrou um <strong>perfil altamente compatível com TDAH</strong>. Você pontuou acima do limiar diagnóstico em pelo menos um domínio na vida adulta (${Math.max(daA,hiA)}/9 sintomas, mínimo 5), com sintomas presentes desde a infância e que impactam sua vida em ${ctxA} contexto${ctxA>1?'s':''} diferentes.</p>
+    <p>Isso significa que há base para uma <strong>avaliação clínica especializada</strong>. Um psiquiatra ou neurologista pode confirmar, aprofundar e — se indicado — propor intervenções que podem transformar sua qualidade de vida.</p>
+    <p><strong>TDAH não é uma limitação</strong> — é uma forma diferente de funcionamento cerebral que, quando entendida, pode revelar uma fonte extraordinária de criatividade, energia e pensamento não-linear.${presType?`<br><br><strong>Tipo de apresentação sugerida:</strong> ${presType} (DSM-5)`:''}</p>`;
+  }else if(isPossible){
+    insightText=`<p>Você identificou sintomas relevantes na vida adulta. ${!r.hasImpact?'No entanto, o número de contextos de vida afetados foi menor do que o necessário pelos critérios do DSM-5.':''} ${!r.earlyOnset?'Além disso, não foi possível confirmar o início dos sintomas antes dos 12 anos.':''}</p>
+    <p>Isso pode indicar um quadro <strong>parcial, subclínico ou atípico</strong> — situações que também merecem atenção. Uma avaliação com especialista pode esclarecer melhor.</p>
+    <p>Você pode estar usando estratégias compensatórias que mascaram os sintomas mas têm um custo alto. Vale investigar.</p>`;
+  }else{
+    insightText=`<p>O número de sintomas reportados está abaixo do limiar formal para TDAH. Isso é uma boa notícia — mas não encerra completamente a conversa.</p>
+    <p>Algumas pessoas com TDAH pontuam abaixo dos limiares por desenvolverem fortes estratégias de compensação. Se você ainda sente que algo não está certo, <strong>não descarte sua experiência</strong>.</p>`;
+  }
+
+  function sc(n,t){return n>=t?'met':n>=t-2?'partial':'';}
+
+  function symSec(qs,title,icon){
+    return`<div class="sec-title">${icon} ${title}</div>`+qs.map(q=>{
+      const hA=pA(q.id),hC=pC(q.id);
+      const dc=(hA&&hC)?'both':hA?'adult':hC?'child':'none';
+      let body='';
+      if(hA){body+=`<div class="sym-chips-lbl">Vida adulta</div><div class="sym-chips-row">${sA(q.id).map(i=>`<span class="sym-chip a">${q.exA[i]}</span>`).join('')}</div>`;}
+      if(hC){body+=`<div class="sym-chips-lbl" style="margin-top:${hA?'8px':'0'}">Infância</div><div class="sym-chips-row">${sC(q.id).map(i=>`<span class="sym-chip c">${q.exC[i]}</span>`).join('')}</div>`;}
+      if(hA||hC){body+=`<div class="sym-why">${hA?`<p><strong>Por que importa (adulto):</strong> ${q.wA}</p>`:''}${hC?`<p style="margin-top:${hA?'8px':'0'}"><strong>Por que importa (infância):</strong> ${q.wC}</p>`:''}</div>`;}
+      return`<div class="sym-item ${hA||hC?'present':''}" id="si_${q.id}">
+        <div class="sym-hdr" onclick="document.getElementById('si_${q.id}').classList.toggle('open')">
+          <div class="sym-dot ${dc}"></div>
+          <div class="sym-name">${q.label}</div>
+          <div class="sym-badges"><span class="sym-badge ${hA?'sa':'no'}">${hA?'Adulto ✓':'Adulto ✗'}</span><span class="sym-badge ${hC?'sc':'no'}">${hC?'Infância ✓':'Infância ✗'}</span></div>
+          <span class="sym-arrow">${hA||hC?'▾':''}</span>
+        </div>
+        ${hA||hC?`<div class="sym-body">${body}</div>`:''}
+      </div>`;
+    }).join('');
+  }
+
+  const nome=pd.nome||'Paciente';
+  addPage('result',`
+  <div class="result-page"><div class="result-shell">
+    <div class="res-hero ${insightCls}">
+      <div class="res-orb ${insightCls}">${isPositive?'🧠':isPossible?'⚡':'✦'}</div>
+      <h2 class="res-headline">${insightTitle}</h2>
+      <p class="res-subline">${nome} · ${pd.sexo||''} · Avaliado em: ${pd.data||''}</p>
+    </div>
+    <div class="score-row">
+      <div class="stile ${sc(daA,5)}"><div class="slbl">DA Adulto</div><div class="snum">${daA}<span class="sden">/9</span></div><div class="sthr">≥5 = limiar</div></div>
+      <div class="stile ${sc(daC,3)}"><div class="slbl">DA Infância</div><div class="snum">${daC}<span class="sden">/9</span></div><div class="sthr">≥3 = limiar</div></div>
+      <div class="stile ${sc(hiA,5)}"><div class="slbl">HI Adulto</div><div class="snum">${hiA}<span class="sden">/9</span></div><div class="sthr">≥5 = limiar</div></div>
+      <div class="stile ${sc(hiC,3)}"><div class="slbl">HI Infância</div><div class="snum">${hiC}<span class="sden">/9</span></div><div class="sthr">≥3 = limiar</div></div>
+    </div>
+    <div class="icard ${insightCls}"><div class="ic-hdr"><div class="ic-dot ${insightCls}"></div><div class="ic-title">${insightTitle}</div></div><div class="ic-body">${insightText}</div></div>
+    <div class="crit-card">
+      <div class="sec-title" style="margin-top:0">Critérios avaliados</div>
+      ${[
+        {ok:r.adultMeets,t:`<strong>Sintomas na vida adulta:</strong> ${Math.max(daA,hiA)} no domínio mais pontuado (mínimo: 5). DA: ${daA}/9 · HI: ${hiA}/9`},
+        {ok:r.childMeets,t:`<strong>Sintomas na infância:</strong> ${Math.max(daC,hiC)} no domínio mais pontuado (mínimo DIVA-5: 3)`},
+        {ok:r.hasImpact, t:`<strong>Prejuízo em múltiplos contextos:</strong> ${ctxA} contexto${ctxA!==1?'s':''} marcado${ctxA!==1?'s':''} na vida adulta (mínimo: 2)`},
+        {ok:r.earlyOnset,t:`<strong>Início na infância (antes dos 12 anos):</strong> ${r.earlyOnset?'Confirmado':'Não confirmado'}`},
+      ].map(row=>`<div class="crit-row"><div class="crit-check">${row.ok?'✅':'❌'}</div><div class="crit-text">${row.t}</div></div>`).join('')}
+    </div>
+    <p style="font-size:12px;color:rgba(255,255,255,.28);margin:20px 0 14px;line-height:1.5">Clique em cada sintoma identificado para ver os exemplos que você selecionou e a explicação clínica.</p>
+    ${symSec(QDA,'Déficit de Atenção — A1 a A9','🎯')}
+    ${symSec(QHI,'Hiperatividade/Impulsividade — HI1 a HI9','⚡')}
+    <div class="icard action" style="margin-top:24px"><div class="ic-hdr"><div class="ic-dot action"></div><div class="ic-title">O que fazer agora</div></div><div class="ic-body">
+      <p><strong>1. Leve este relatório a um profissional.</strong> Um psiquiatra ou neurologista com experiência em TDAH pode usar estas informações como ponto de partida para uma avaliação clínica completa.</p>
+      <p><strong>2. Você não está sozinho(a).</strong> O TDAH afeta cerca de 5% dos adultos no mundo. Entender como seu cérebro funciona é sempre um passo de autocuidado, seja qual for o resultado.</p>
+      <p><strong>3. Independente do diagnóstico, você pode agir.</strong> Estratégias de organização, manejo do tempo, suporte emocional e tratamento adequado podem transformar sua relação com os sintomas.</p>
+    </div></div>
+    <div class="res-actions"><button class="btn btn-ghost" onclick="window.print()">🖨️ Imprimir / PDF</button></div>
+    <div class="res-footer"><strong>Aviso:</strong> Este relatório tem fins de triagem e autoconhecimento. Não constitui diagnóstico clínico.<br>DIVA-5 · Adaptação brasileira: Prof. Dr. Mário Rodrigues Louzã · Instituto de Psiquiatria do HCFMUSP</div>
+  </div></div>`);
+  showPage('result');
+}
+
+// ─── INIT ─────────────────────────────────────────
+async function init(){
+  const app=document.getElementById('app');
+
+  // Páginas estáticas
+  addPage(0,`<div class="hero">
+    <div class="hero-pill">Avaliação baseada em evidências</div>
+    <h1 class="hero-title">Entenda seu<br><em>cérebro.</em></h1>
+    <p class="hero-sub">Uma avaliação guiada baseada no instrumento diagnóstico oficial DIVA-5, adaptado para adultos brasileiros.</p>
+    <div class="hero-cards">
+      <div class="hcard"><div class="hcard-icon">🎯</div><div class="hcard-title">18 sintomas</div><div class="hcard-text">Atenção e Hiperatividade — avaliados na vida adulta e na infância</div></div>
+      <div class="hcard"><div class="hcard-icon">🕐</div><div class="hcard-title">20–30 minutos</div><div class="hcard-text">Selecione os exemplos que fazem sentido para você</div></div>
+      <div class="hcard"><div class="hcard-icon">💡</div><div class="hcard-title">Resultado detalhado</div><div class="hcard-text">Entenda o porquê de cada sintoma e o que fazer</div></div>
+      <div class="hcard"><div class="hcard-icon">🔒</div><div class="hcard-title">Confidencial</div><div class="hcard-text">Apenas você e seu profissional de saúde têm acesso</div></div>
+    </div>
+    <p class="hero-disc">⚕️ Esta ferramenta tem fins de triagem e autoconhecimento. Não substitui avaliação clínica por profissional de saúde.</p>
+    <button class="btn btn-hero" onclick="showPage(1)">Começar <span class="btn-icon">→</span></button>
+  </div>`);
+
+  addPage(1,`<div class="form-page"><div class="form-shell">
+    <div class="form-eyebrow">Passo 1 de 3</div>
+    <h2 class="form-heading">Seus <em>dados</em></h2>
+    <p class="form-desc">Essas informações aparecem no seu relatório pessoal.</p>
+    <div class="form-grid">
+      <div class="fgroup full"><label>Nome completo</label><input type="text" id="f_nome" placeholder="Como prefere ser chamado(a)?"/></div>
+      <div class="fgroup"><label>Nascimento</label><input type="date" id="f_nasc"/></div>
+      <div class="fgroup"><label>Sexo</label><select id="f_sexo"><option value="">Selecione</option><option>Masculino</option><option>Feminino</option><option>Outro</option><option>Prefiro não informar</option></select></div>
+      <div class="fgroup"><label>Escolaridade</label><select id="f_esc"><option value="">Selecione</option><option>Fundamental incompleto</option><option>Fundamental completo</option><option>Médio incompleto</option><option>Médio completo</option><option>Superior incompleto</option><option>Superior completo</option><option>Pós-graduação</option></select></div>
+      <div class="fgroup"><label>Situação profissional</label><select id="f_prof"><option value="">Selecione</option><option>Empregado(a)</option><option>Autônomo(a)</option><option>Desempregado(a)</option><option>Estudante</option><option>Aposentado(a)</option></select></div>
+      <div class="fgroup"><label>Data da avaliação</label><input type="date" id="f_data"/></div>
+    </div>
+    <div class="form-nav">
+      <button class="btn btn-ghost" onclick="showPage(0)">← Voltar</button>
+      <button class="btn btn-primary" onclick="showPage(2)">Continuar <span class="btn-icon">→</span></button>
+    </div>
+  </div></div>`);
+
+  addPage(2,`<div class="instr-page"><div class="instr-shell">
+    <span class="instr-icon">✦</span>
+    <h2 class="instr-heading">Como <em>funciona</em></h2>
+    <p class="instr-body">Para cada um dos 18 sintomas você verá exemplos do dia a dia. <strong style="color:rgba(255,255,255,.75)">Clique nos que se parecem com você</strong> — pode ser nenhum, um ou vários. Faça isso para a vida adulta e para a infância separadamente.</p>
+    <div class="instr-tags">
+      <span class="tag-pill tag-blue">🟦 Exemplos da vida adulta</span>
+      <span class="tag-pill tag-pink">🩷 Exemplos da infância</span>
+      <span class="tag-pill tag-em">✓ Selecionar ≥1 identifica o sintoma</span>
+    </div>
+    <div class="instr-nav">
+      <button class="btn btn-ghost" onclick="showPage(1)">← Voltar</button>
+      <button class="btn btn-primary" onclick="showPage(3)">Iniciar avaliação <span class="btn-icon">→</span></button>
+    </div>
+  </div></div>`);
+
+  // Questões
+  QDA.forEach((q,i)=>buildQPage(q,3+i,false));
+  addPage(12,`<div class="trans-page"><div class="trans-shell">
+    <div class="trans-orb">⚡</div>
+    <h2 class="trans-heading">Parte 2 —<br><em>Hiperatividade</em></h2>
+    <p class="trans-body">Você concluiu o bloco de Déficit de Atenção. Agora avaliamos os 9 sintomas de Hiperatividade e Impulsividade.</p>
+    <div style="display:flex;gap:12px;justify-content:center">
+      <button class="btn btn-ghost" onclick="showPage(11)">← Anterior</button>
+      <button class="btn btn-primary" onclick="showPage(13)">Continuar <span class="btn-icon">→</span></button>
+    </div>
+  </div></div>`);
+  QHI.forEach((q,i)=>buildQPage(q,13+i,true));
+
+  // Contextos
+  const ctxA=['Trabalho ou educação (erros frequentes, dificuldade de concluir projetos, desorganização)','Relacionamentos e vida familiar (conflitos, dificuldades domésticas, distância emocional)','Contatos sociais (dificuldade em manter amizades, mal-entendidos, conflitos)','Tempo livre e hobbies (incapaz de relaxar, perde interesse rápido)','Autoconfiança e autoimagem (insegurança, medo de falhar, sensação de não ser suficiente)'];
+  const ctxC=['Escola (erros por distração, não terminava tarefas, comentários dos professores)','Vida familiar (conflitos com pais e irmãos, precisava de ajuda constante)','Contatos sociais (poucos amigos, conflitos, ser excluído(a))','Tempo livre e hobbies (não conseguia relaxar, buscava sempre ação intensa)','Autoconfiança e autoimagem (baixa autoestima, medo de errar)'];
+  addPage(22,`<div class="ctx-page"><div class="ctx-shell">
+    <h2 class="ctx-heading">Impacto na <em>sua vida</em></h2>
+    <p class="ctx-sub">Em quais áreas os sintomas causam ou causaram dificuldades?</p>
+    <div class="ctx-section-lbl">Vida adulta</div>
+    ${ctxA.map((c,i)=>`<div class="ctx-item" id="ctxA_${i}" onclick="toggleCtx('a',${i})"><div class="ctx-chk" id="ctxChk_a_${i}">✓</div><div class="ctx-text">${c}</div></div>`).join('')}
+    <div class="ctx-section-lbl">Infância</div>
+    ${ctxC.map((c,i)=>`<div class="ctx-item" id="ctxC_${i}" onclick="toggleCtx('c',${i})"><div class="ctx-chk" id="ctxChk_c_${i}">✓</div><div class="ctx-text">${c}</div></div>`).join('')}
+    <div class="ctx-section-lbl" style="margin-top:24px">Início dos sintomas</div>
+    <p style="font-size:13px;color:rgba(255,255,255,.3);margin-bottom:12px;line-height:1.6">Havia vários desses sintomas presentes antes dos 12 anos?</p>
+    <div class="onset-row">
+      <button class="onset-btn" id="onset_yes" onclick="setOnset(true)">✅ Sim, desde criança</button>
+      <button class="onset-btn" id="onset_no" onclick="setOnset(false)">❌ Começaram mais tarde</button>
+    </div>
+    <div class="q-nav" style="margin-top:28px">
+      <button class="btn btn-ghost" onclick="showPage(21)">← Anterior</button>
+      <button class="btn btn-primary" onclick="finishAndSave()">Ver meu relatório <span class="btn-icon">→</span></button>
+    </div>
+  </div></div>`);
+
+  // Salvando
+  addPage('saving',`<div class="saving-page"><div class="saving-shell">
+    <div class="saving-orb">💾</div>
+    <h2 class="saving-title">Salvando seu relatório…</h2>
+    <p class="saving-sub">Aguarde um momento enquanto registramos suas respostas com segurança.</p>
+  </div></div>`);
+
+  S.total = 24;
+
+  // Preencher data
+  setTimeout(()=>{
+    const el=document.getElementById('f_data');
+    if(el)el.value=new Date().toISOString().slice(0,10);
+    if(S.patientName){const fn=document.getElementById('f_nome');if(fn)fn.value=S.patientName;}
+  },100);
+
+  // Validar token
+  try{
+    const res=await fetch(`/api/link/${TOKEN}`);
+    if(res.status===410){
+      // já usado
+      app.innerHTML=`<div class="page active"><div class="err-page"><div class="err-shell">
+        <div class="err-icon">✅</div>
+        <h2 class="err-title">Avaliação já realizada</h2>
+        <p class="err-sub">Este link já foi utilizado. Seu relatório foi registrado com sucesso. Se precisar de uma nova avaliação, entre em contato com seu profissional de saúde.</p>
+      </div></div></div>`;
+      return;
+    }
+    if(!res.ok){throw new Error('Link inválido');}
+    const data=await res.json();
+    if(data.patientName)S.patientName=data.patientName;
+  }catch(e){
+    app.innerHTML=`<div class="page active"><div class="err-page"><div class="err-shell">
+      <div class="err-icon">🔗</div>
+      <h2 class="err-title">Link inválido</h2>
+      <p class="err-sub">Este link de avaliação não existe ou expirou. Por favor, solicite um novo link ao seu profissional de saúde.</p>
+    </div></div></div>`;
+    return;
+  }
+
+  showPage(0);
+}
+
+init();
+</script>
+</body>
+</html>
