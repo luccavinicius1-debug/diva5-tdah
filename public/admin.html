@@ -779,6 +779,241 @@
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
   ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+  /* ═══════ ENHANCED REPORT STYLES ═══════ */
+  .rpt-section { margin-bottom: 28px; }
+  .rpt-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .rpt-section-title::before {
+    content: '';
+    width: 3px;
+    height: 14px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+
+  .patient-info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .patient-info-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+  }
+  .patient-info-item .pi-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 4px;
+  }
+  .patient-info-item .pi-value {
+    font-size: 13px;
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .criteria-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .crit-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 13px 15px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .crit-item.met {
+    background: var(--green-bg);
+    border-color: rgba(74,222,128,0.25);
+  }
+  .crit-item.not-met {
+    background: var(--red-bg);
+    border-color: rgba(248,113,113,0.2);
+  }
+  .crit-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .crit-content .crit-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+  .crit-content .crit-desc {
+    font-size: 11px;
+    color: var(--text3);
+    line-height: 1.4;
+  }
+  .crit-item.met .crit-label { color: var(--green); }
+  .crit-item.not-met .crit-label { color: var(--red); }
+
+  .prestype-banner {
+    background: linear-gradient(135deg, rgba(124,106,247,0.15), rgba(157,143,255,0.05));
+    border: 1px solid rgba(124,106,247,0.3);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .prestype-icon { font-size: 28px; }
+  .prestype-label { font-size: 15px; font-weight: 700; color: var(--accent2); }
+  .prestype-code { font-size: 12px; color: var(--text3); margin-top: 2px; }
+
+  /* Symptom accordion */
+  .sym-group { margin-bottom: 6px; }
+  .sym-acc-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    margin-bottom: 6px;
+    transition: border-color 0.2s;
+  }
+  .sym-acc-item.present { border-color: rgba(124,106,247,0.3); }
+  .sym-acc-item.absent { opacity: 0.55; }
+
+  .sym-acc-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .sym-acc-header:hover { background: rgba(255,255,255,0.03); }
+
+  .sym-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .sym-status-dot.both { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .sym-status-dot.adult-only { background: var(--accent2); box-shadow: 0 0 6px var(--accent2); }
+  .sym-status-dot.child-only { background: var(--amber); box-shadow: 0 0 6px var(--amber); }
+  .sym-status-dot.none { background: rgba(255,255,255,0.18); }
+
+  .sym-acc-name { font-size: 13px; font-weight: 600; flex: 1; color: var(--text); }
+  .sym-acc-item.absent .sym-acc-name { color: var(--text3); }
+
+  .sym-period-badges { display: flex; gap: 5px; }
+  .sym-pb {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 20px;
+  }
+  .sym-pb.adult { background: rgba(124,106,247,0.18); color: rgba(180,160,255,0.9); }
+  .sym-pb.child { background: rgba(251,191,36,0.15); color: rgba(251,191,36,0.9); }
+  .sym-pb.none { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.2); }
+
+  .sym-acc-arrow { font-size: 10px; color: var(--text3); transition: transform 0.2s; }
+  .sym-acc-item.expanded .sym-acc-arrow { transform: rotate(180deg); }
+
+  .sym-acc-body {
+    display: none;
+    padding: 0 14px 14px;
+    border-top: 1px solid var(--border);
+  }
+  .sym-acc-item.expanded .sym-acc-body { display: block; padding-top: 12px; }
+
+  .sym-examples-block { margin-bottom: 10px; }
+  .sym-ex-period-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 6px;
+  }
+  .sym-ex-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+  .sym-ex-chip {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+  .sym-ex-chip.adult { background: rgba(124,106,247,0.14); border: 1px solid rgba(124,106,247,0.22); color: rgba(180,160,255,0.9); }
+  .sym-ex-chip.child { background: rgba(251,191,36,0.12); border: 1px solid rgba(251,191,36,0.2); color: rgba(251,191,36,0.9); }
+
+  .sym-why-box {
+    background: rgba(255,255,255,0.025);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-top: 8px;
+  }
+  .sym-why-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 5px;
+  }
+  .sym-why-text { font-size: 12px; color: var(--text3); line-height: 1.65; }
+  .sym-why-text.childhood { color: rgba(251,191,36,0.55); margin-top: 5px; }
+
+  .context-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+  .context-tag {
+    padding: 5px 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 20px;
+    font-size: 12px;
+    color: var(--text2);
+  }
+
+  .score-bar-wrap { margin-top: 6px; }
+  .score-bar-track {
+    height: 6px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 4px;
+  }
+  .score-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.6s ease;
+  }
+  .score-bar-fill.accent { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+  .score-bar-fill.green { background: linear-gradient(90deg, #22c55e, #4ade80); }
+  .score-bar-fill.red { background: linear-gradient(90deg, #ef4444, #f87171); }
+
+  .notes-box {
+    background: rgba(251,191,36,0.06);
+    border: 1px solid rgba(251,191,36,0.18);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    font-size: 13px;
+    color: rgba(251,191,36,0.8);
+    line-height: 1.65;
+  }
+  .notes-box strong { color: rgba(251,191,36,1); }
 </style>
 </head>
 <body>
@@ -1229,6 +1464,109 @@ async function deleteReport(token) {
 }
 
 // ══════════════════════════════════════════════════════
+//  DIVA-5 QUESTION DATA (para mapear índices → textos)
+// ══════════════════════════════════════════════════════
+const QDA=[
+  {id:'A1',label:'A1 — Atenção aos detalhes',
+   wA:'Dificuldade com detalhes é um dos sinais mais clássicos do déficit de atenção. Não se trata de descuido — o cérebro com TDAH tem dificuldade em sustentar o foco em informações precisas, gerando erros mesmo em pessoas inteligentes e dedicadas.',
+   wC:'Quando esse padrão aparece já na infância, sugere origem neurobiológica — não preguiça ou falta de motivação.',
+   exA:['Cometo erros por distração','Preciso trabalhar devagar para evitar erros','Não leio instruções com atenção','Não me saio bem em trabalhos detalhados','Preciso de muito tempo para detalhes','Me perco nos detalhes','Trabalho rápido e acabo errando'],
+   exC:['Cometia erros de distração nos trabalhos escolares','Errava por ler mal as perguntas','Deixava perguntas sem responder','Não via perguntas no verso das provas','Os outros comentavam sobre meu trabalho descuidado','Não revia as respostas dos trabalhos de casa']},
+  {id:'A2',label:'A2 — Manter a concentração',
+   wA:'Manter o foco ao longo do tempo é o principal desafio do TDAH. O cérebro busca novidade e estimulação constante — isso é fisiológico, envolvendo o funcionamento da dopamina no córtex pré-frontal.',
+   wC:'Dificuldade de sustentar atenção que começa na infância e persiste na vida adulta é um dos critérios centrais do diagnóstico de TDAH.',
+   exA:['Não consigo manter atenção por muito tempo','Me distraio com meus próprios pensamentos','Tenho dificuldade de ver um filme até o fim','Fico entediado(a) rapidamente','Faço perguntas sobre coisas já discutidas'],
+   exC:['Tinha dificuldade em prestar atenção nas tarefas','Tinha dificuldade em me manter atento(a) aos jogos','Me distraía com facilidade','Precisava de ambiente muito estruturado','Ficava entediado(a) rapidamente']},
+  {id:'A3',label:'A3 — Parece não estar ouvindo',
+   wA:'Não é falta de respeito — o cérebro pode estar ativo em "outro canal" e ter dificuldade de mudar o foco voluntariamente para a conversa.',
+   wC:'Pais e professores frequentemente interpretam como teimosia, quando na verdade reflete dificuldade real de direcionar e manter a atenção.',
+   exA:['Divago ou pareço ausente em conversas','Tenho dificuldade de me concentrar em uma conversa','Depois de conversar, não sei do que se falou','Mudo frequentemente o assunto','As pessoas dizem que estou com a cabeça nas nuvens'],
+   exC:['Não me lembrava do que pais ou professores diziam','Ficava frequentemente "sonhando acordado(a)"','Só prestava atenção se levantassem a voz','Precisava ser chamado(a) mais de uma vez','As perguntas precisavam ser repetidas']},
+  {id:'A4',label:'A4 — Não terminar tarefas',
+   wA:'Começar é fácil — manter o engajamento até o fim é o desafio. O TDAH afeta a função executiva responsável por completar sequências, especialmente quando a tarefa deixou de ser nova.',
+   wC:'Dificuldade em concluir tarefas na infância é sinal precoce e consistente de comprometimento das funções executivas.',
+   exA:['Faço várias coisas ao mesmo tempo e não termino nenhuma','Tenho dificuldade de finalizar algo que não é mais novidade','Preciso de prazo-limite para terminar as coisas','Tenho dificuldade com tarefas administrativas','Tenho dificuldade em seguir manuais'],
+   exC:['Tinha dificuldade de terminar as tarefas a tempo','Meu quarto e mesa ficavam sempre bagunçados','Tinha dificuldade de planejar tarefas','Fazia várias coisas ao mesmo tempo','Chegava atrasado(a) com frequência']},
+  {id:'A5',label:'A5 — Dificuldade de organização',
+   wA:'Organização depende de funções executivas processadas no córtex pré-frontal, sub-regulado no TDAH. Não é preguiça — é uma dificuldade neurobiológica real.',
+   wC:'Desorganização que aparece na infância e persiste é evidência forte de base neurobiológica.',
+   exA:['Tenho dificuldade de gerenciar tarefas sequenciais','Minha casa e/ou trabalho são desorganizados','Trabalho de forma bagunçada','Confirmo dois compromissos no mesmo horário','Chego atrasado(a) ou perco prazos','Não consigo usar agenda de forma consistente','Tenho má percepção do tempo'],
+   exC:['Tinha dificuldade de planejar o dia a dia','Raramente estava pronto(a) a tempo','Meu quarto e mesa ficavam desarrumados','Tinha dificuldade de manter as coisas em ordem','Tinha má noção do tempo']},
+  {id:'A6',label:'A6 — Evitar esforço mental',
+   wA:'O cérebro com TDAH tem dificuldade em gerar dopamina suficiente para tarefas monótonas. A evitação não é preguiça — é uma resposta neurológica real.',
+   wC:'A aversão a tarefas de esforço mental sustentado é um dos marcadores mais consistentes de TDAH na infância, frequentemente confundida com desmotivação.',
+   exA:['Faço primeiro o que é mais fácil ou divertido','Fico adiando tarefas entediantes','Adio e com isso perco prazos','Evito trabalhos monótonos ou administrativos','Evito preparar relatórios ou preencher formulários','Não gosto de ler por exigir muito esforço'],
+   exC:['Evitava ou detestava os trabalhos de casa','Lia poucos livros ou não gostava de ler','Evitava coisas que exigiam concentração','Detestava matérias que exigiam muito foco','Ficava adiando tarefas difíceis']},
+  {id:'A7',label:'A7 — Perder objetos',
+   wA:'A memória de trabalho — responsável por manter informações ativas — é frequentemente comprometida no TDAH. Perder objetos é um reflexo direto dessa dificuldade.',
+   wC:'Perder materiais com frequência desde criança é sinal forte de comprometimento da memória de trabalho.',
+   exA:['Perco carteira, chaves ou agenda','Frequentemente deixo coisas para trás','Perco papéis do trabalho','Perco muito tempo procurando coisas','Coloco coisas nos lugares errados'],
+   exC:['Perdia agenda, canetas ou materiais escolares','Perdia roupas, brinquedos ou trabalhos de casa','Perdia muito tempo procurando coisas','Ficava em pânico quando alguém mudava coisas de lugar']},
+  {id:'A8',label:'A8 — Distração por estímulos externos',
+   wA:'O cérebro com TDAH tem filtro sensorial menos eficiente. Em vez de ignorar automaticamente os estímulos irrelevantes, ele os processa com atenção semelhante.',
+   wC:'A distração frequente é um dos sinais mais visíveis do TDAH na infância e o que mais chama atenção de pais e professores.',
+   exA:['Tenho dificuldade de ignorar estímulos ao redor','Depois de me distrair, tenho dificuldade de voltar','Me distraio com barulhos ou movimentos ao redor','Fico ouvindo as conversas dos outros sem querer','Tenho dificuldade de filtrar informações irrelevantes'],
+   exC:['Na aula, ficava olhando pela janela','Me distraía facilmente com barulhos','Depois de me distrair, tinha dificuldade de voltar']},
+  {id:'A9',label:'A9 — Esquecer atividades do dia a dia',
+   wA:'Esquecimentos frequentes são consequência do comprometimento da memória prospectiva. Podem causar prejuízos significativos no trabalho e nos relacionamentos.',
+   wC:'O padrão de esquecimentos na infância é indicador confiável de dificuldades de memória de trabalho relacionadas ao TDAH.',
+   exA:['Esqueço compromissos ou obrigações','Esqueço chaves, agenda e outros itens','Preciso ser constantemente lembrado(a)','Esqueço de pagar contas ou retornar ligações','Preciso voltar para pegar coisas esquecidas','Uso listas rígidas para não esquecer'],
+   exC:['Esquecia compromissos ou instruções','Esquecia de fazer tarefas ou dar recados','Precisava ser lembrado(a) com frequência','No meio de uma tarefa, esquecia o que fazer']},
+];
+const QHI=[
+  {id:'HI1',label:'HI1 — Agitação motora sentado',
+   wA:'A inquietação motora é uma manifestação física da hiperatividade neurológica. O corpo busca estimulação para compensar a sub-regulação do sistema nervoso.',
+   wC:'Dificuldade de ficar quieto é um dos sinais mais marcantes da hiperatividade na infância.',
+   exA:['Tenho dificuldade de ficar sentado(a) quieto(a)','Fico balançando as pernas','Bato com a caneta ou mexo em objetos','Roo as unhas ou mexo no cabelo','Consigo controlar, mas fico ainda mais tenso(a)'],
+   exC:['Meus pais diziam para eu ficar quieto(a)','Balançava as pernas','Batia com a caneta ou brincava com objetos','Roia unhas ou mexia no cabelo','Não conseguia ficar sentado(a) normalmente']},
+  {id:'HI2',label:'HI2 — Levantar-se em situações inadequadas',
+   wA:'A necessidade de movimento é uma característica neurobiológica do TDAH. Permanecer sentado por longos períodos requer esforço enorme e pode ser esgotante.',
+   wC:'Levantar constantemente em sala de aula ou durante refeições é um dos comportamentos mais característicos da hiperatividade infantil.',
+   exA:['Saio frequentemente do meu lugar no trabalho','Evito palestras e cultos — fico desconfortável','Prefiro andar em vez de ficar sentado(a)','Nunca fico parado(a) por muito tempo'],
+   exC:['Levantava enquanto comia ou saía do lugar na sala','Era chamado(a) à atenção para ficar sentado(a)','Dava desculpas para andar por aí']},
+  {id:'HI3',label:'HI3 — Sentir-se irrequieto por dentro',
+   wA:'Em adultos, a hiperatividade motora da infância frequentemente se internaliza: o corpo fica mais quieto, mas a mente continua acelerada — o que é cansativo e muitas vezes confundido com ansiedade.',
+   wC:'Na infância, essa agitação tende a ser física e visível. Reconhecer esse padrão histórico ajuda a conectar com o que persiste na vida adulta.',
+   exA:['Sinto-me irrequieto(a) ou agitado(a) por dentro','Tenho a sensação de precisar estar sempre ocupado(a)','Tenho dificuldade de relaxar'],
+   exC:['Estava sempre correndo','Subia em móveis ou saltava sobre cadeiras','Subia em árvores','Sentia-me agitado(a) por dentro']},
+  {id:'HI4',label:'HI4 — Dificuldade em lazer calmo',
+   wA:'O cérebro com TDAH tem dificuldade em "desacelerar" voluntariamente. O lazer pode se tornar fonte de inquietação quando envolve atividades calmas.',
+   wC:'Barulho, agitação e dificuldade de brincar tranquilamente são marcadores comuns de hiperatividade na infância.',
+   exA:['Falo durante atividades quando não seria adequado','Em público, tendo a chamar atenção','Tenho dificuldade de fazer atividades sossegadamente','Tenho dificuldade de falar baixo'],
+   exC:['Era barulhento(a) durante jogos ou na aula','Não conseguia assistir TV sossegado(a)','Era repreendido(a) para ficar mais quieto(a)','Em público, tendia a me destacar']},
+  {id:'HI5',label:'HI5 — "A mil por hora"',
+   wA:'Essa sensação de aceleração interna é uma das formas mais expressivas da hiperatividade em adultos. Pode ser percebida como energia, mas também como incapacidade de "pausar" — gerando esgotamento.',
+   wC:'Nível de atividade acima do esperado para a idade, que parece não ter um botão de "off", é um dos critérios mais robustos de hiperatividade na infância.',
+   exA:['Estou sempre fazendo alguma coisa','Sinto desconforto em ficar parado(a) em restaurantes ou reuniões','Tenho muita energia, estou sempre em movimento','Os outros me acham inquieto(a) ou difícil de acompanhar'],
+   exC:['Estava constantemente ocupado(a)','Os outros me achavam inquieto(a)','Tinha excesso de atividade na escola e em casa','Tinha muita energia']},
+  {id:'HI6',label:'HI6 — Falar excessivamente',
+   wA:'Falar muito e com rapidez é uma manifestação da impulsividade verbal. O pensamento "transborda" antes de ser filtrado.',
+   wC:'Ser "tagarela" ou falar sem parar é sinal frequente de TDAH na infância, muitas vezes punido sem que a causa real seja entendida.',
+   exA:['Falo tão agitado(a) que os outros me acham cansativo(a)','Tenho fama de ser muito falador(a)','Tenho dificuldade de parar de falar','Não deixo os outros falarem na conversa'],
+   exC:['Tinha fama de ser tagarela','Professores e pais mandavam eu me calar frequentemente','Era punido(a) por falar demais','Distraía os outros com conversas']},
+  {id:'HI7',label:'HI7 — Responder antes da pergunta terminar',
+   wA:'A impulsividade verbal é diretamente relacionada ao déficit de inibição de resposta — uma das funções executivas mais comprometidas no TDAH. Não é falta de educação.',
+   wC:'Querer ser o(a) primeiro(a) a responder e interromper são manifestações precoces de impulsividade.',
+   exA:['Falo impulsivamente, sem pensar antes','Digo o que me vem à cabeça','Respondo sem deixar o outro terminar','Completo as frases dos outros','Sou visto(a) como indelicado(a) ou sem tato'],
+   exC:['Era tagarela, dizia coisas sem pensar','Queria ser o(a) primeiro(a) a responder','Dizia a primeira resposta, mesmo errada','Interrompia os outros antes de terminarem']},
+  {id:'HI8',label:'HI8 — Dificuldade em esperar a vez',
+   wA:'A tolerância à frustração e a capacidade de aguardar dependem do controle inibitório. A impaciência no TDAH é fisiológica — não é defeito de caráter.',
+   wC:'Impaciência em filas, em jogos em grupo e em sala de aula é sinal clássico de impulsividade infantil.',
+   exA:['Tenho dificuldade de esperar em filas','Fico impaciente no trânsito','Sou impaciente de forma geral','Inicio ou abandono empregos e relacionamentos por impaciência'],
+   exC:['Tinha dificuldade de esperar minha vez em grupo','Queria ser sempre o(a) primeiro(a) a falar','Me tornava impaciente com facilidade','Atravessava a rua sem olhar']},
+  {id:'HI9',label:'HI9 — Interromper ou se intrometer',
+   wA:'Interromper e se meter em assuntos alheios são expressões de impulsividade social — dificuldade de inibir respostas e gerenciar o momento certo de agir.',
+   wC:'A intromissão em jogos e conversas alheias leva a conflitos e rejeição por pares — gerando cicatrizes emocionais que persistem na vida adulta.',
+   exA:['Me meto facilmente nos assuntos dos outros','Interrompo os outros durante conversas','Os outros comentam que sou intrometido(a)','Tenho opinião sobre tudo e a expresso na hora'],
+   exC:['Me intrometia nos jogos dos outros','Interrompia as conversas dos outros','Reagia a tudo','Não conseguia esperar']},
+];
+
+const CTX_LABELS = [
+  'Trabalho / emprego','Relacionamentos (cônjuge/parceiro)','Relacionamentos (família)','Relacionamentos (amigos/sociais)',
+  'Educação / formação','Atividades de lazer','Confiança / autoestima','Habilidades organizacionais'
+];
+
+// ══════════════════════════════════════════════════════
 //  REPORT MODAL
 // ══════════════════════════════════════════════════════
 async function viewReport(token) {
@@ -1264,151 +1602,321 @@ function closeModalBtn() {
 }
 
 function renderReportModal(report) {
-  const pd     = report.patientData || {};
-  const scores = report.scores || {};
-  const result = report.result || {};
-  const answers= report.answers || {};
+  const pd      = report.patientData || {};
+  const scores  = report.scores || {};
+  const result  = report.result || {};
+  const answers = report.answers || {};
 
-  document.getElementById('modal-patient-name').textContent = report.patient_name || pd.nome || 'Relatório';
+  const nome = report.patient_name || pd.nome || 'Paciente';
+  document.getElementById('modal-patient-name').textContent = nome;
 
-  // suporta ambos os formatos: {daA,daC,hiA,hiC} (novo) e {daAdult,daChild,hiAdult,hiChild} (legado)
-  const daA  = scores.daA  ?? scores.daAdult  ?? 0;
-  const daC  = scores.daC  ?? scores.daChild  ?? 0;
-  const hiA  = scores.hiA  ?? scores.hiAdult  ?? 0;
-  const hiC  = scores.hiC  ?? scores.hiChild  ?? 0;
+  // Suporta ambos os formatos de score
+  const daA = scores.daA ?? scores.daAdult  ?? 0;
+  const daC = scores.daC ?? scores.daChild  ?? 0;
+  const hiA = scores.hiA ?? scores.hiAdult  ?? 0;
+  const hiC = scores.hiC ?? scores.hiChild  ?? 0;
 
-  const diagnosis = result.summary || buildDiagnosisSummary(scores, result);
-  // Monta label do tipo de apresentação
-  const presLabel = result.presType === 'combined' ? 'Tipo Combinado'
-    : result.presType === 'inattentive' ? 'Predominantemente Desatento'
-    : result.presType === 'hyperactive' ? 'Predominantemente Hiperativo/Impulsivo'
-    : null;
+  // Critérios DSM-5
+  const THRESH_A = 5, THRESH_C = 3;
+  const daMet  = daA >= THRESH_A && daC >= THRESH_C;
+  const hiMet  = hiA >= THRESH_A && hiC >= THRESH_C;
+  const hasImpact  = result.hasImpact  ?? (result.ctxA >= 2);
+  const earlyOnset = result.earlyOnset ?? (result.onset === true);
+  const isPositive = result.isPositive ?? (daMet || hiMet);
 
-  let html = `
-    <div class="report-hero">
-      <div class="report-patient">${escHtml(report.patient_name || pd.nome || 'Paciente')}</div>
-      <div class="report-meta">
-        ${report.patient_email ? `<span>${escHtml(report.patient_email)}</span> · ` : ''}
-        <span>${formatDate(report.created_at)}</span>
-        ${pd.idade ? ` · <span>${escHtml(pd.idade)} anos</span>` : ''}
-      </div>
-    </div>
-
-    <div class="score-grid">
-      <div class="score-tile accent">
-        <div class="num">${daA}<span style="font-size:18px;opacity:0.5">/9</span></div>
-        <div class="lbl">Déficit de Atenção · Adulto</div>
-      </div>
-      <div class="score-tile accent">
-        <div class="num">${hiA}<span style="font-size:18px;opacity:0.5">/9</span></div>
-        <div class="lbl">Hiperatividade · Adulto</div>
-      </div>
-      <div class="score-tile green">
-        <div class="num">${daC}<span style="font-size:18px;opacity:0.5">/9</span></div>
-        <div class="lbl">Déficit de Atenção · Infância</div>
-      </div>
-      <div class="score-tile green">
-        <div class="num">${hiC}<span style="font-size:18px;opacity:0.5">/9</span></div>
-        <div class="lbl">Hiperatividade · Infância</div>
-      </div>
-    </div>
-
-    <div class="diagnosis-card">
-      <h3>Resultado da Avaliação${presLabel ? ` · <span style="color:var(--accent2);font-size:14px">${escHtml(presLabel)}</span>` : ''}</h3>
-      <p>${escHtml(diagnosis)}</p>
-    </div>
-  `;
-
-  // Symptom details
-  if (report.answers && typeof report.answers === 'object') {
-    html += renderSymptomDetails(report.answers, scores);
+  // Tipo de apresentação
+  let presType = result.presType || '';
+  let presLabel = '', presCode = '', presIcon = '', presColor = '';
+  if (presType.includes('Combinada') || presType.includes('combined')) {
+    presLabel = 'Apresentação Combinada';
+    presCode  = 'DSM-5: 314.01';
+    presIcon  = '🔀';
+    presColor = '#a78bfa';
+  } else if (presType.includes('Desatenta') || presType.includes('inattentive')) {
+    presLabel = 'Predominantemente Desatenta';
+    presCode  = 'DSM-5: 314.00';
+    presIcon  = '🎯';
+    presColor = '#7c6af7';
+  } else if (presType.includes('Hiperativa') || presType.includes('hyperactive')) {
+    presLabel = 'Predominantemente Hiperativa-Impulsiva';
+    presCode  = 'DSM-5: 314.01';
+    presIcon  = '⚡';
+    presColor = '#fbbf24';
   }
 
-  // Patient context
-  if (pd.contextoAdulto || pd.contextoInfancia) {
-    html += `<div class="divider"></div>
-    <div class="symptoms-section">
-      <h3>Contexto Relatado</h3>`;
-    if (pd.contextoAdulto)   html += `<p style="font-size:13px; color:var(--text2); margin-bottom:8px"><strong style="color:var(--text3)">Adulto:</strong> ${escHtml(pd.contextoAdulto)}</p>`;
-    if (pd.contextoInfancia) html += `<p style="font-size:13px; color:var(--text2)"><strong style="color:var(--text3)">Infância:</strong> ${escHtml(pd.contextoInfancia)}</p>`;
+  // ── 1. CABEÇALHO DO PACIENTE ───────────────────────
+  let html = `<div class="rpt-section">
+    <div class="report-hero" style="margin-bottom:0">
+      <div class="report-patient">${escHtml(nome)}</div>
+      <div class="report-meta" style="margin-top:6px">`;
+  if (report.patient_email) html += `<span>📧 ${escHtml(report.patient_email)}</span> &nbsp;·&nbsp; `;
+  html += `<span>📅 Avaliação: ${formatDate(report.created_at)}</span>`;
+  html += `</div></div></div>`;
+
+  // ── 2. DADOS DEMOGRÁFICOS ──────────────────────────
+  const hasPd = pd.nasc || pd.sexo || pd.esc || pd.prof || pd.data;
+  if (hasPd) {
+    html += `<div class="rpt-section">
+      <div class="rpt-section-title">Dados do Paciente</div>
+      <div class="patient-info-grid">`;
+    if (pd.nasc) html += `<div class="patient-info-item"><div class="pi-label">Nascimento</div><div class="pi-value">${escHtml(pd.nasc)}</div></div>`;
+    if (pd.sexo) html += `<div class="patient-info-item"><div class="pi-label">Sexo</div><div class="pi-value">${escHtml(pd.sexo)}</div></div>`;
+    if (pd.esc)  html += `<div class="patient-info-item"><div class="pi-label">Escolaridade</div><div class="pi-value">${escHtml(pd.esc)}</div></div>`;
+    if (pd.prof) html += `<div class="patient-info-item"><div class="pi-label">Profissão</div><div class="pi-value">${escHtml(pd.prof)}</div></div>`;
+    if (pd.data) html += `<div class="patient-info-item"><div class="pi-label">Data da avaliação</div><div class="pi-value">${escHtml(pd.data)}</div></div>`;
+    html += `</div></div>`;
+  }
+
+  // ── 3. PONTUAÇÕES ──────────────────────────────────
+  html += `<div class="rpt-section">
+    <div class="rpt-section-title">Pontuações DIVA-5</div>
+    <div class="score-grid">`;
+
+  function scoreBar(val, max, color) {
+    const pct = Math.round((val/max)*100);
+    const met = (max===9 && val >= THRESH_A);
+    const barColor = met ? 'red' : color;
+    return `<div class="score-bar-wrap">
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:4px">
+        <span>0</span><span>${max}</span>
+      </div>
+      <div class="score-bar-track"><div class="score-bar-fill ${barColor}" style="width:${pct}%"></div></div>
+    </div>`;
+  }
+
+  html += `
+    <div class="score-tile ${daA >= THRESH_A ? 'accent' : ''}">
+      <div class="num">${daA}<span style="font-size:18px;opacity:0.5">/9</span></div>
+      <div class="lbl">Déficit de Atenção · Adulto</div>
+      ${scoreBar(daA, 9, 'accent')}
+      <div style="font-size:10px;margin-top:5px;color:${daA>=THRESH_A?'var(--red)':'var(--text3)'}">Limiar: ≥${THRESH_A} sintomas</div>
+    </div>
+    <div class="score-tile ${hiA >= THRESH_A ? 'accent' : ''}">
+      <div class="num">${hiA}<span style="font-size:18px;opacity:0.5">/9</span></div>
+      <div class="lbl">Hiperatividade · Adulto</div>
+      ${scoreBar(hiA, 9, 'accent')}
+      <div style="font-size:10px;margin-top:5px;color:${hiA>=THRESH_A?'var(--red)':'var(--text3)'}">Limiar: ≥${THRESH_A} sintomas</div>
+    </div>
+    <div class="score-tile ${daC >= THRESH_C ? 'green' : ''}">
+      <div class="num">${daC}<span style="font-size:18px;opacity:0.5">/9</span></div>
+      <div class="lbl">Déficit de Atenção · Infância</div>
+      ${scoreBar(daC, 9, 'green')}
+      <div style="font-size:10px;margin-top:5px;color:${daC>=THRESH_C?'var(--green)':'var(--text3)'}">Limiar: ≥${THRESH_C} sintomas</div>
+    </div>
+    <div class="score-tile ${hiC >= THRESH_C ? 'green' : ''}">
+      <div class="num">${hiC}<span style="font-size:18px;opacity:0.5">/9</span></div>
+      <div class="lbl">Hiperatividade · Infância</div>
+      ${scoreBar(hiC, 9, 'green')}
+      <div style="font-size:10px;margin-top:5px;color:${hiC>=THRESH_C?'var(--green)':'var(--text3)'}">Limiar: ≥${THRESH_C} sintomas</div>
+    </div>
+  </div></div>`;
+
+  // ── 4. CRITÉRIOS DSM-5 ─────────────────────────────
+  html += `<div class="rpt-section">
+    <div class="rpt-section-title">Critérios Diagnósticos DSM-5</div>
+    <div class="criteria-grid">
+      <div class="crit-item ${daMet ? 'met' : 'not-met'}">
+        <div class="crit-icon">${daMet ? '✅' : '❌'}</div>
+        <div class="crit-content">
+          <div class="crit-label">Critério A — Déficit de Atenção</div>
+          <div class="crit-desc">${daA}/9 sintomas adulto · ${daC}/9 sintomas infância<br>Necessário ≥${THRESH_A} adulto E ≥${THRESH_C} infância</div>
+        </div>
+      </div>
+      <div class="crit-item ${hiMet ? 'met' : 'not-met'}">
+        <div class="crit-icon">${hiMet ? '✅' : '❌'}</div>
+        <div class="crit-content">
+          <div class="crit-label">Critério A — Hiperatividade/Impulsividade</div>
+          <div class="crit-desc">${hiA}/9 sintomas adulto · ${hiC}/9 sintomas infância<br>Necessário ≥${THRESH_A} adulto E ≥${THRESH_C} infância</div>
+        </div>
+      </div>
+      <div class="crit-item ${hasImpact ? 'met' : 'not-met'}">
+        <div class="crit-icon">${hasImpact ? '✅' : '❌'}</div>
+        <div class="crit-content">
+          <div class="crit-label">Critério B — Prejuízo Funcional</div>
+          <div class="crit-desc">Sintomas causam prejuízo em ≥2 contextos de vida${result.ctxA !== undefined ? ` (${result.ctxA} contextos relatados)` : ''}</div>
+        </div>
+      </div>
+      <div class="crit-item ${earlyOnset ? 'met' : 'not-met'}">
+        <div class="crit-icon">${earlyOnset ? '✅' : '❌'}</div>
+        <div class="crit-content">
+          <div class="crit-label">Critério C — Início Precoce</div>
+          <div class="crit-desc">Sintomas presentes antes dos 12 anos de idade${earlyOnset ? ' — confirmado' : ' — não confirmado'}</div>
+        </div>
+      </div>
+    </div>`;
+
+  // Banner resultado
+  if (isPositive && presLabel) {
+    html += `<div class="prestype-banner">
+      <div class="prestype-icon">${presIcon}</div>
+      <div>
+        <div class="prestype-label">TDAH · ${presLabel}</div>
+        <div class="prestype-code">${presCode} — Critérios de autoavaliação atingidos</div>
+      </div>
+    </div>`;
+  } else if (daMet || hiMet) {
+    html += `<div class="prestype-banner" style="border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.07)">
+      <div class="prestype-icon">⚠️</div>
+      <div>
+        <div class="prestype-label" style="color:var(--amber)">Critérios Parcialmente Atingidos</div>
+        <div class="prestype-code" style="color:var(--text3)">Sintomas presentes mas nem todos os critérios DSM-5 foram confirmados</div>
+      </div>
+    </div>`;
+  } else {
+    html += `<div class="prestype-banner" style="border-color:var(--border);background:var(--surface)">
+      <div class="prestype-icon">ℹ️</div>
+      <div>
+        <div class="prestype-label" style="color:var(--text2)">Critérios Não Atingidos nesta Autoavaliação</div>
+        <div class="prestype-code" style="color:var(--text3)">Avaliação clínica profissional sempre recomendada para diagnóstico definitivo</div>
+      </div>
+    </div>`;
+  }
+  html += `</div>`;
+
+  // ── 5. SINTOMAS DETALHADOS ─────────────────────────
+  html += `<div class="rpt-section">
+    <div class="rpt-section-title">Déficit de Atenção — Sintomas Detalhados (DA)</div>`;
+  html += renderSymptomAccordion(answers, QDA);
+  html += `</div>`;
+
+  html += `<div class="rpt-section">
+    <div class="rpt-section-title">Hiperatividade / Impulsividade — Sintomas Detalhados (HI)</div>`;
+  html += renderSymptomAccordion(answers, QHI);
+  html += `</div>`;
+
+  // ── 6. CONTEXTOS DE VIDA ───────────────────────────
+  const ctxA = result.ctxA !== undefined ? result.ctxA : (Array.isArray(result.ctxA) ? result.ctxA.length : null);
+  const ctxC = result.ctxC !== undefined ? result.ctxC : null;
+  const ctxAArr = Array.isArray(result.ctxA) ? result.ctxA : [];
+  const ctxCArr = Array.isArray(result.ctxC) ? result.ctxC : [];
+
+  if (ctxAArr.length > 0 || ctxCArr.length > 0 || (typeof ctxA === 'number' && ctxA > 0)) {
+    html += `<div class="rpt-section">
+      <div class="rpt-section-title">Contextos de Vida Afetados</div>`;
+    if (ctxAArr.length > 0) {
+      html += `<div style="font-size:11px;font-weight:600;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.6px">Vida adulta</div>
+        <div class="context-tags">`;
+      ctxAArr.forEach(i => {
+        const lbl = CTX_LABELS[i] || `Contexto ${i+1}`;
+        html += `<span class="context-tag" style="background:rgba(124,106,247,0.1);border-color:rgba(124,106,247,0.2);color:var(--accent2)">${escHtml(lbl)}</span>`;
+      });
+      html += `</div>`;
+    } else if (typeof ctxA === 'number') {
+      html += `<p style="font-size:13px;color:var(--text2)">${ctxA} contexto(s) de vida adulta afetado(s) relatado(s).</p>`;
+    }
+    if (ctxCArr.length > 0) {
+      html += `<div style="font-size:11px;font-weight:600;color:var(--text3);margin-top:14px;margin-bottom:8px;text-transform:uppercase;letter-spacing:.6px">Infância</div>
+        <div class="context-tags">`;
+      ctxCArr.forEach(i => {
+        const lbl = CTX_LABELS[i] || `Contexto ${i+1}`;
+        html += `<span class="context-tag" style="background:rgba(251,191,36,0.08);border-color:rgba(251,191,36,0.2);color:var(--amber)">${escHtml(lbl)}</span>`;
+      });
+      html += `</div>`;
+    }
     html += `</div>`;
   }
 
+  // ── 7. NOTAS DO CLÍNICO ────────────────────────────
+  html += `<div class="rpt-section">
+    <div class="rpt-section-title">Nota Clínica</div>
+    <div class="notes-box">
+      <strong>⚠️ Atenção:</strong> Esta avaliação é um instrumento de autorelato baseado no DIVA-5 e <strong>não substitui</strong> avaliação clínica completa.
+      O diagnóstico de TDAH requer entrevista clínica, anamnese detalhada, exclusão de comorbidades e avaliação multidisciplinar por profissional habilitado.
+      Use este relatório como <strong>ponto de partida</strong> para a consulta.
+    </div>
+  </div>`;
+
   document.getElementById('modal-body').innerHTML = html;
+
+  // Ativa accordions
+  document.querySelectorAll('.sym-acc-header').forEach(hdr => {
+    hdr.addEventListener('click', () => {
+      const item = hdr.closest('.sym-acc-item');
+      item.classList.toggle('expanded');
+    });
+  });
 }
 
-function renderSymptomDetails(answers, scores) {
-  const DA_LABELS = [
-    'Atenção a detalhes / erros por descuido',
-    'Manter atenção em tarefas longas',
-    'Parece não escutar quando falado diretamente',
-    'Seguir instruções e concluir tarefas',
-    'Organizar tarefas e atividades',
-    'Evitar tarefas que exigem esforço mental',
-    'Perder objetos necessários',
-    'Distrair-se com estímulos externos',
-    'Esquecer atividades do dia a dia'
-  ];
-  const HI_LABELS = [
-    'Agitar mãos, pés ou mexer no assento',
-    'Sair do lugar quando deveria ficar sentado',
-    'Correr ou subir em situações inapropriadas',
-    'Dificuldade em atividades silenciosas ou de lazer',
-    'Agitação constante, como "movido a motor"',
-    'Falar excessivamente',
-    'Responder antes da pergunta ser concluída',
-    'Dificuldade em esperar a vez',
-    'Interromper ou intrometer-se'
-  ];
-
-  // Suporta formato {selA:{da1:[0,1]}, selC:{da1:[2]}} (formato atual do teste.html)
-  // e formato legado {da1:{adult:[...], child:[...]}}
-  const selA = answers.selA || {};
-  const selC = answers.selC || {};
+function renderSymptomAccordion(answers, questions) {
+  const selA = (answers.selA || answers || {});
+  const selC = (answers.selC || {});
   const isNewFormat = answers.selA !== undefined;
 
   function getAdult(key) {
     if (isNewFormat) return Array.isArray(selA[key]) ? selA[key] : [];
-    return Array.isArray((answers[key] || {}).adult) ? answers[key].adult : [];
+    const legacy = answers[key] || {};
+    return Array.isArray(legacy.adult) ? legacy.adult : [];
   }
   function getChild(key) {
     if (isNewFormat) return Array.isArray(selC[key]) ? selC[key] : [];
-    return Array.isArray((answers[key] || {}).child) ? answers[key].child : [];
+    const legacy = answers[key] || {};
+    return Array.isArray(legacy.child) ? legacy.child : [];
   }
 
-  let html = `<div class="divider"></div><div class="symptoms-section"><h3>Sintomas de Déficit de Atenção</h3>`;
-  for (let i = 1; i <= 9; i++) {
-    const key   = `da${i}`;
-    const adult = getAdult(key);
-    const child = getChild(key);
-    const yes   = adult.length > 0 || child.length > 0;
-    html += `<div class="symptom-row">
-      <div class="symptom-check ${yes ? 'yes' : 'no'}">${yes ? '✓' : '·'}</div>
-      <div>
-        <div class="symptom-label">${escHtml(DA_LABELS[i-1])}</div>
-        ${adult.length ? `<div class="chips-mini">${adult.map(x => `<span class="chip-mini">${escHtml(String(x))}</span>`).join('')}</div>` : ''}
-        ${child.length ? `<div class="chips-mini" style="opacity:0.7">${child.map(x => `<span class="chip-mini">${escHtml(String(x))}</span>`).join('')}</div>` : ''}
-      </div>
-    </div>`;
-  }
-  html += `</div>`;
+  let html = '';
+  questions.forEach(q => {
+    const adultIdxs = getAdult(q.id);
+    const childIdxs = getChild(q.id);
+    const hasAdult  = adultIdxs.length > 0;
+    const hasChild  = childIdxs.length > 0;
+    const present   = hasAdult || hasChild;
 
-  html += `<div class="symptoms-section" style="margin-top:24px"><h3>Sintomas de Hiperatividade / Impulsividade</h3>`;
-  for (let i = 1; i <= 9; i++) {
-    const key   = `hi${i}`;
-    const adult = getAdult(key);
-    const child = getChild(key);
-    const yes   = adult.length > 0 || child.length > 0;
-    html += `<div class="symptom-row">
-      <div class="symptom-check ${yes ? 'yes' : 'no'}">${yes ? '✓' : '·'}</div>
-      <div>
-        <div class="symptom-label">${escHtml(HI_LABELS[i-1])}</div>
-        ${adult.length ? `<div class="chips-mini">${adult.map(x => `<span class="chip-mini">${escHtml(String(x))}</span>`).join('')}</div>` : ''}
-        ${child.length ? `<div class="chips-mini" style="opacity:0.7">${child.map(x => `<span class="chip-mini">${escHtml(String(x))}</span>`).join('')}</div>` : ''}
-      </div>
-    </div>`;
-  }
-  html += `</div>`;
+    let dotClass = 'none';
+    if (hasAdult && hasChild) dotClass = 'both';
+    else if (hasAdult)        dotClass = 'adult-only';
+    else if (hasChild)        dotClass = 'child-only';
+
+    const adultBadge = hasAdult
+      ? `<span class="sym-pb adult">${adultIdxs.length} adulto</span>`
+      : `<span class="sym-pb none">adulto —</span>`;
+    const childBadge = hasChild
+      ? `<span class="sym-pb child">${childIdxs.length} infância</span>`
+      : `<span class="sym-pb none">infância —</span>`;
+
+    // Traduz índices em textos dos exemplos
+    const adultTexts = adultIdxs.map(i => q.exA[i]).filter(Boolean);
+    const childTexts = childIdxs.map(i => q.exC[i]).filter(Boolean);
+
+    const labelShort = q.label.replace(/^[A-Z0-9]+ — /, '');
+
+    html += `<div class="sym-acc-item ${present ? 'present' : 'absent'}">
+      <div class="sym-acc-header">
+        <div class="sym-status-dot ${dotClass}"></div>
+        <div class="sym-acc-name">${escHtml(q.label)}</div>
+        <div class="sym-period-badges">${adultBadge}${childBadge}</div>
+        <div class="sym-acc-arrow">▼</div>
+      </div>`;
+
+    if (present) {
+      html += `<div class="sym-acc-body">`;
+      if (adultTexts.length > 0) {
+        html += `<div class="sym-examples-block">
+          <div class="sym-ex-period-label">🟣 Vida Adulta — exemplos relatados</div>
+          <div class="sym-ex-chips">`;
+        adultTexts.forEach(t => {
+          html += `<span class="sym-ex-chip adult">${escHtml(t)}</span>`;
+        });
+        html += `</div></div>`;
+      }
+      if (childTexts.length > 0) {
+        html += `<div class="sym-examples-block">
+          <div class="sym-ex-period-label">🟡 Infância — exemplos relatados</div>
+          <div class="sym-ex-chips">`;
+        childTexts.forEach(t => {
+          html += `<span class="sym-ex-chip child">${escHtml(t)}</span>`;
+        });
+        html += `</div></div>`;
+      }
+      html += `<div class="sym-why-box">
+        <div class="sym-why-label">🧠 Relevância clínica</div>
+        <div class="sym-why-text">${escHtml(q.wA)}</div>
+        ${q.wC ? `<div class="sym-why-text childhood" style="margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,0.06)"><em>Infância:</em> ${escHtml(q.wC)}</div>` : ''}
+      </div>`;
+      html += `</div>`;
+    }
+
+    html += `</div>`;
+  });
 
   return html;
 }
