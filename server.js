@@ -66,9 +66,18 @@ app.get('/api/admin/check', (req, res) => {
   res.json({ admin: !!(req.session && req.session.admin) });
 });
 
-// Retorna o IP local para o painel gerar links acessíveis pelo paciente
+// Retorna a URL base para o painel gerar links acessíveis pelo paciente
+// Em produção (Railway/cloud) usa o host do request; localmente usa o IP da rede
 app.get('/api/server-info', requireAdmin, (req, res) => {
   const ip = getLocalIP();
+  // Se há um host header com domínio externo (não localhost/IP privado), usa ele
+  const host = req.headers['x-forwarded-host'] || req.headers.host || '';
+  const isCloud = host && !host.startsWith('localhost') && !host.match(/^192\.168|^10\.|^172\.(1[6-9]|2\d|3[01])\./);
+  if (isCloud) {
+    const proto = req.headers['x-forwarded-proto'] || 'https';
+    const baseUrl = `${proto}://${host}`;
+    return res.json({ ip: host, port: PORT, baseUrl });
+  }
   res.json({ ip, port: PORT, baseUrl: `http://${ip}:${PORT}` });
 });
 
