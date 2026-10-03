@@ -1,0 +1,15 @@
+{
+  "name": "agenda-sync",
+  "version": "1.0.0",
+  "description": "Sincroniza a agenda do Doutor Hérnia (unidade Janaúba) com o calendário do GoHighLevel",
+  "main": "index.js",
+  "private": true,
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "calendarios": "node index.js calendarios",
+    "simular": "node index.js simular",
+    "sync": "node index.js uma-vez",
+    "start": "node index.js rodar 5",
+    "test": "node --test test/"
+  }
+}
