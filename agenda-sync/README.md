@@ -82,5 +82,5 @@ paciente (não duplica). Essa pasta e o `.env` estão no `.gitignore`.
 ## Testes
 
 ```bash
-node --test test/
+node --test test/*.test.js
 ```
